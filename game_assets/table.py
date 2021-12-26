@@ -1,8 +1,8 @@
 from typing import Tuple
 
-from .scorer import Scorer
-from .player import Player
-from .euchre import NUM_PLAYERS, NUM_TRICKS
+from scorer import Scorer
+from player import Player
+from euchre import NUM_PLAYERS, NUM_TRICKS
 
 class Table:
     """
