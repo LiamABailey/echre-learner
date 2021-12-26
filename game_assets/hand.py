@@ -27,11 +27,14 @@ class Hand:
         self.tricks = []
         self.trump = trump
         self.bidder = bidder
+        # define winning defaults
+        self.winning_team = None
+        self.points = 0
 
 
     def add_trick(self, played_trick: Trick) -> None:
         """
-        add a played trick to the trick storer.
+        add a played and scored trick to the trick storer.
 
         Parameters
         ----------
@@ -43,13 +46,15 @@ class Hand:
             None
 
         """
-            if len(self.tricks) >= NUM_TRICKS:
+            if len(self.tricks) > NUM_TRICKS:
                 raise ValueError("Attempting to add unexpected trick!")
             self.tricks.append(played_trick)
 
-    def score_hand(self) -> Tuple(bool, int):
+
+    def score_hand(self) -> None:
         """
-        Score a hand of (5) played tricks, and return the winning team + score
+        Score a hand of (5) played tricks, and sets the winning team +
+        score on the hand
 
         Parameters
         ----------
@@ -57,7 +62,5 @@ class Hand:
 
         Returns
         -------
-            bool : True if the 0th team won, 1 otherwise
-            int : the number of points scored
+            None
         """
-        

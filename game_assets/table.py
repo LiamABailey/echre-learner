@@ -8,8 +8,6 @@ class Table:
     """
     The game table, consisting of the scorer, and the four players.
     """
-    SUITS = ['C','D','H','S']
-    CARDS = ['9','10','J','Q','K','A']
     def __init__(self,
                 scorer: Scorer,
                 p1: Player,
