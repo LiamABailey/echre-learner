@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Union
 
-from euchre import CARD_FACES, SUIT_DESCRIPTOR, FACE_DESCRIPTOR, JACK
+from .euchre import CARD_FACES, SUIT_DESCRIPTOR, FACE_DESCRIPTOR, JACK, LEFT_SUIT
 
 @dataclass
 class Card:
@@ -31,7 +31,7 @@ class Card:
         -------
             bool : True if is left bar, false otherwise
         """
-        if self.face == euchre.JACK and self.suit == LEFT_SUIT[trump]:
+        if self.face == JACK and self.suit == LEFT_SUIT[trump]:
             return True
 
     def is_trump(self, trump: Union[str, int]) -> bool:
@@ -52,7 +52,7 @@ class Card:
         return False
 
 
-    def lt_card(self, other: Card, trump: Union[str, int], lead: Union[str, int]) -> bool:
+    def lt_card(self, other: 'Card', trump: Union[str, int], lead: Union[str, int]) -> bool:
         """
         Check if this card is of lower value than another card, given
         the trump suit and leading suit

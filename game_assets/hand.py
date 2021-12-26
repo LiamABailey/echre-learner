@@ -1,7 +1,7 @@
 from typing import Union
 
-from euchre import NUM_TRICKS, NUM_TRICKS_TO_WIN_HAND, TEAM_ZERO, TEAM_ZERO_ID, TEAM_ONE_ID
-from trick import Trick
+from .euchre import NUM_TRICKS, NUM_TRICKS_TO_WIN_HAND, TEAM_ZERO, TEAM_ZERO_ID, TEAM_ONE_ID
+from .trick import Trick
 
 class Hand:
 

@@ -1,8 +1,8 @@
 from collections import namedtuple
 from typing import Union
 
-from card import Card
-from euchre import NUM_PLAYERS
+from .card import Card
+from .euchre import NUM_PLAYERS
 
 class Trick:
     """
