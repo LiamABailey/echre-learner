@@ -1,6 +1,6 @@
 from typing import Union
 
-from euchre import NUM_TRICKS
+from euchre import NUM_TRICKS, NUM_TRICKS_TO_WIN_HAND, TEAM_ZERO, TEAM_ZERO_ID, TEAM_ONE_ID
 from trick import Trick
 
 class Hand:
@@ -64,3 +64,37 @@ class Hand:
         -------
             None
         """
+        num_wins = 0
+        for trick in tricks:
+            if trick.winning_player in TEAM_ZERO:
+                num_wins += 1
+        if num_wins >= NUM_TRICKS_TO_WIN_HAND:
+            self.winning_team = TEAM_ZERO_ID
+        else:
+            self.winning_team = TEAM_ONE_ID
+            # invert - the previous tallying was performed with respect to
+            # team zero winning
+            num_wins = NUM_TRICKS - num_wins
+        self._calc_points(num_wins, self.bidder in TEAMS[self.winning_team])
+
+
+    def _calc_points(num_tricks_won: int, is_bidder: bool) - > int:
+        """
+        Calculate the number of points won by the team
+
+        Parameters
+        ----------
+            num_tricks_won : int
+                The number of tricks in the hand won
+
+            is_bidder : bool
+                If the team contained the bidder
+        """
+        n_points = 0
+        if num_tricks_won > 3:
+            if num_tricks_won or not is_bidder:
+                n_points = 2
+            else:
+                n_points = 1
+
+        return n_points
