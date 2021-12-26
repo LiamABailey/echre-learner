@@ -55,4 +55,10 @@ class Trick:
             None
         """
         # assume the starting player won, and then challenge this assumption
-        # high_card = self.played_cards[0].card
+        leading_suit = self.played_cards[0].card.suit
+        high = self.played_cards[0].card
+        for p in range(1, NUM_PLAYERS):
+            candidate = self.played_cards[p]
+            if high.card.lt_card(candidate.card, trump, leading_suit):
+                high = candidate
+        self.winning_player = high.player
