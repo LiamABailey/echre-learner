@@ -23,7 +23,8 @@ JACK = 2
 QUEEN = 3
 KING = 4
 ACE = 5
-CARD_FACES = [NINE, TEN, JACK, KING, QUEEN, ACE]
+# card faces must be ordered in desired comparison (non-trump ordering)
+CARD_FACES = [NINE, TEN, JACK, QUEEN, KING, ACE]
 FACE_DESCRIPTOR = {
     NINE : "nine",
     TEN : "ten",

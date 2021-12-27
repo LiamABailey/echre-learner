@@ -92,15 +92,15 @@ class Card:
                         return True
                     return False
                 else:
-                    CARD_FACES.index(self.face) < CARD_FACES.index(other.face)
+                    return CARD_FACES.index(self.face) < CARD_FACES.index(other.face)
             else:
-                if self.is_trump(lead) and not other.is_trump(lead):
+                if self.suit == lead and other.suit != lead:
                     return False
                 # this card isn't lead, other is
-                elif not self.is_trump(lead) and other.is_trump(lead):
+                elif self.suit != lead and other.suit == lead:
                     return True
                 else:
                     # this is the rare case where neither card lead, or is
                     # in the trump suit. Neither of these cards can wind the
                     # trick, so we don't care about the evaluation.
-                    CARD_FACES.index(self.face) < CARD_FACES.index(other.face)
+                    return CARD_FACES.index(self.face) < CARD_FACES.index(other.face)
