@@ -64,9 +64,13 @@ class Trick:
         -------
             None
         """
+        if len(self.played_cards) != NUM_PLAYERS:
+            raise ValueError(f"Expected {NUM_PLAYERS} played cards for trick scoring,"
+                            f" saw {len(self.played_cards)}")
         # assume the starting player won, and then challenge this assumption
         leading_suit = self.played_cards[0].card.suit
-        high = self.played_cards[0].card
+        high = self.played_cards[0]
+        # since played_cards tracks in order, we can review challengers in order
         for candidate in self.played_cards[1:]:
             if high.card.lt_card(candidate.card, trump, leading_suit):
                 high = candidate

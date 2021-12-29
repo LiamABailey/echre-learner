@@ -52,7 +52,7 @@ class TestAddCard(unittest.TestCase):
         ]
         first_3_seats = [2,3,0]
         self.trick.leading_suit = lead_suit
-        self.trick.played_cards = [trick.PlayedCard(card, seat) for card, seat in zip(first_3_cards, first_3_seats)]
+        self.trick.played_cards = [trick.PlayedCard(c, s) for c, s in zip(first_3_cards, first_3_seats)]
 
         last_card = card.Card(lead_suit, euchre.QUEEN)
         last_seat = 1
@@ -79,3 +79,38 @@ class TestAddCard(unittest.TestCase):
         low_seat = euchre.NUM_PLAYERS + 1
         with self.assertRaises(ValueError):
             self.trick.add_card(card.Card(euchre.CLUB, euchre.KING), low_seat)
+
+
+class TestScoreTrick(unittest.TestCase):
+
+    def setUp(self):
+        self.empty_trick = trick.Trick()
+        self.trump_wins_trick = trick.Trick()
+        trump_wins_cards = [
+            card.Card(euchre.CLUB, euchre.ACE),
+            card.Card(euchre.DIAMOND, euchre.TEN),
+            card.Card(euchre.CLUB, euchre.QUEEN),
+            card.Card(euchre.CLUB, euchre.KING)
+        ]
+        trump_wins_seat_order = [2,3,0,1]
+        self.trump_wins_diamond_expected_seat = 3
+        self.trump_wins_club_expected_seat = 2
+        self.trump_wins_heart_expected_seat = 2
+        for c, s in zip(trump_wins_cards, trump_wins_seat_order):
+            self.trump_wins_trick.add_card(c, s)
+
+    def test_score_trick_not_fully_played(self):
+        """
+        Assert error raised when not scoring a fully-played trick
+        """
+        trump_suit = euchre.DIAMOND
+        with self.assertRaises(ValueError):
+            self.empty_trick.score_trick(trump_suit)
+
+
+    def test_score_trick_trump_wins(self):
+        """
+        Test of scoring for simple case - trump beats non-trump
+        """
+        self.trump_wins_trick.score_trick(euchre.DIAMOND)
+        self.assertEqual(self.trump_wins_trick.winning_player, self.trump_wins_diamond_expected_seat)
