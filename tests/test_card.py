@@ -1,7 +1,6 @@
 import unittest
 
-from game_assets import euchre
-from game_assets import card
+from game_assets import card, euchre
 
 class TestIsLeftBar(unittest.TestCase):
 

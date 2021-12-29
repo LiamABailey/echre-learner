@@ -1,18 +1,24 @@
 from collections import namedtuple
+from dataclasses import dataclass
 from typing import Union
 
 from .card import Card
 from .euchre import NUM_PLAYERS
 
+@dataclass
+class PlayedCard:
+    card: Card
+    player: int
+
 class Trick:
     """
     Class associated with a single trick (where each player plays one card)
     """
-    PlayedCard = namedtuple('PlayedCard',['player','card'])
-    def __init__():
+    def __init__(self):
         """
 
         """
+        self.leading_suit = None
         self.played_cards = []
         self.winning_player = None
 
@@ -38,7 +44,11 @@ class Trick:
             raise ValueError("Attempting to add an extra card")
         if player < 0 or NUM_PLAYERS <= player:
             raise ValueError(f"Player seat {player} not supported")
-        self.played_cards.append(PlayedCard(player, card))
+        # if the first card, set the leading suit
+        if len(self.played_cards) == 0:
+            self.leading_suit = card.suit
+        self.played_cards.append(PlayedCard(card, player))
+
 
 
     def score_trick(self, trump: Union[str, int]) -> None:
@@ -57,8 +67,7 @@ class Trick:
         # assume the starting player won, and then challenge this assumption
         leading_suit = self.played_cards[0].card.suit
         high = self.played_cards[0].card
-        for p in range(1, NUM_PLAYERS):
-            candidate = self.played_cards[p]
+        for candidate in self.played_cards[1:]:
             if high.card.lt_card(candidate.card, trump, leading_suit):
                 high = candidate
         self.winning_player = high.player
