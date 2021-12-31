@@ -99,6 +99,37 @@ class TestScoreTrick(unittest.TestCase):
         for c, s in zip(test_trick_1_cards, test_trick_1_order):
             self.test_trick_1.add_card(c, s)
 
+        self.test_trick_2 = trick.Trick()
+        test_trick_2_cards = [
+            card.Card(euchre.CLUB, euchre.QUEEN),
+            card.Card(euchre.SPADE, euchre.JACK),
+            card.Card(euchre.CLUB, euchre.JACK),
+            card.Card(euchre.HEART, euchre.NINE)
+        ]
+        test_trick_2_order = [3,0,1,2]
+        self.test_trick_2_spade_expected_win_seat = 0
+        self.test_trick_2_club_expected_win_seat = 1
+        self.test_trick_2_heart_expected_win_seat = 2
+        self.test_trick_2_diamond_expected_win_seat = 3
+        for c, s in zip(test_trick_2_cards, test_trick_2_order):
+            self.test_trick_2.add_card(c, s)
+
+        self.test_trick_3 = trick.Trick()
+        test_trick_3_cards = [
+            card.Card(euchre.DIAMOND, euchre.TEN),
+            card.Card(euchre.SPADE, euchre.KING),
+            card.Card(euchre.CLUB, euchre.JACK),
+            card.Card(euchre.HEART, euchre.ACE)
+        ]
+        test_trick_3_order = [0,1,2,3]
+        self.test_trick_3_spade_expected_win_seat = 1
+        self.test_trick_3_club_expected_win_seat = 2
+        self.test_trick_3_heart_expected_win_seat = 3
+        self.test_trick_3_diamond_expected_win_seat = 0
+        for c, s in zip(test_trick_3_cards, test_trick_3_order):
+            self.test_trick_3.add_card(c, s)
+
+
     def test_score_trick_not_fully_played(self):
         """
         Assert error raised when not scoring a fully-played trick
@@ -127,3 +158,32 @@ class TestScoreTrick(unittest.TestCase):
         """
         self.test_trick_1.score_trick(euchre.HEART)
         self.assertEqual(self.test_trick_1.winning_player, self.test_trick_1_heart_expected_win_seat)
+
+
+    def test_score_trick_test_trick_2_club(self):
+        """
+        Test of scoring for right beats left, when left played first
+        """
+        self.test_trick_2.score_trick(euchre.CLUB)
+        self.assertEqual(self.test_trick_2.winning_player, self.test_trick_2_club_expected_win_seat)
+
+    def test_score_trick_test_trick_2_spade(self):
+        """
+        Test of scoring for right beats left, when right played first
+        """
+        self.test_trick_2.score_trick(euchre.SPADE)
+        self.assertEqual(self.test_trick_2.winning_player, self.test_trick_2_spade_expected_win_seat)
+
+    def test_score_trick_test_trick_2_heart(self):
+        """
+        Test of scoring for low red card beating black cards
+        """
+        self.test_trick_2.score_trick(euchre.HEART)
+        self.assertEqual(self.test_trick_2.winning_player, self.test_trick_2_heart_expected_win_seat)
+
+    def test_score_trick_test_trick_2_diamond(self):
+        """
+        Test of scoring: no trump played, lead wins
+        """
+        self.test_trick_2.score_trick(euchre.DIAMOND)
+        self.assertEqual(self.test_trick_2.winning_player, self.test_trick_2_diamond_expected_win_seat)
