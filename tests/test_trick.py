@@ -119,12 +119,12 @@ class TestScoreTrick(unittest.TestCase):
             card.Card(euchre.DIAMOND, euchre.TEN),
             card.Card(euchre.SPADE, euchre.KING),
             card.Card(euchre.CLUB, euchre.JACK),
-            card.Card(euchre.HEART, euchre.ACE)
+            card.Card(euchre.SPADE, euchre.ACE)
         ]
         test_trick_3_order = [0,1,2,3]
-        self.test_trick_3_spade_expected_win_seat = 1
+        self.test_trick_3_spade_expected_win_seat = 2
         self.test_trick_3_club_expected_win_seat = 2
-        self.test_trick_3_heart_expected_win_seat = 3
+        self.test_trick_3_heart_expected_win_seat = 0
         self.test_trick_3_diamond_expected_win_seat = 0
         for c, s in zip(test_trick_3_cards, test_trick_3_order):
             self.test_trick_3.add_card(c, s)
@@ -159,7 +159,6 @@ class TestScoreTrick(unittest.TestCase):
         self.test_trick_1.score_trick(euchre.HEART)
         self.assertEqual(self.test_trick_1.winning_player, self.test_trick_1_heart_expected_win_seat)
 
-
     def test_score_trick_test_trick_2_club(self):
         """
         Test of scoring for right beats left, when left played first
@@ -187,3 +186,17 @@ class TestScoreTrick(unittest.TestCase):
         """
         self.test_trick_2.score_trick(euchre.DIAMOND)
         self.assertEqual(self.test_trick_2.winning_player, self.test_trick_2_diamond_expected_win_seat)
+
+    def test_score_trick_test_trick_3_heart(self):
+        """
+        Test of scoring for lead wins when no trump played, despite being the lowest face value
+        """
+        self.test_trick_3.score_trick(euchre.HEART)
+        self.assertEqual(self.test_trick_3.winning_player, self.test_trick_3_heart_expected_win_seat)
+
+    def test_score_trick_test_trick_3_spade(self):
+        """
+        Test of scoring for left beating ace/king
+        """
+        self.test_trick_3.score_trick(euchre.SPADE)
+        self.assertEqual(self.test_trick_3.winning_player, self.test_trick_3_spade_expected_win_seat)
