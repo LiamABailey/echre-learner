@@ -85,19 +85,19 @@ class TestScoreTrick(unittest.TestCase):
 
     def setUp(self):
         self.empty_trick = trick.Trick()
-        self.trump_wins_trick = trick.Trick()
-        trump_wins_cards = [
+        self.test_trick_1 = trick.Trick()
+        test_trick_1_cards = [
             card.Card(euchre.CLUB, euchre.ACE),
             card.Card(euchre.DIAMOND, euchre.TEN),
             card.Card(euchre.CLUB, euchre.QUEEN),
             card.Card(euchre.CLUB, euchre.KING)
         ]
-        trump_wins_seat_order = [2,3,0,1]
-        self.trump_wins_diamond_expected_seat = 3
-        self.trump_wins_club_expected_seat = 2
-        self.trump_wins_heart_expected_seat = 2
-        for c, s in zip(trump_wins_cards, trump_wins_seat_order):
-            self.trump_wins_trick.add_card(c, s)
+        test_trick_1_order = [2,3,0,1]
+        self.test_trick_1_diamond_expected_win_seat = 3
+        self.test_trick_1_club_expected_win_seat = 2
+        self.test_trick_1_heart_expected_win_seat = 2
+        for c, s in zip(test_trick_1_cards, test_trick_1_order):
+            self.test_trick_1.add_card(c, s)
 
     def test_score_trick_not_fully_played(self):
         """
@@ -107,10 +107,23 @@ class TestScoreTrick(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.empty_trick.score_trick(trump_suit)
 
-
-    def test_score_trick_trump_wins(self):
+    def test_score_trick_test_trick_1_diamond(self):
         """
         Test of scoring for simple case - trump beats non-trump
         """
-        self.trump_wins_trick.score_trick(euchre.DIAMOND)
-        self.assertEqual(self.trump_wins_trick.winning_player, self.trump_wins_diamond_expected_seat)
+        self.test_trick_1.score_trick(euchre.DIAMOND)
+        self.assertEqual(self.test_trick_1.winning_player, self.test_trick_1_diamond_expected_win_seat)
+
+    def test_score_trick_test_trick_1_club(self):
+        """
+        Test of scoring - lead wins by size w/in trump
+        """
+        self.test_trick_1.score_trick(euchre.CLUB)
+        self.assertEqual(self.test_trick_1.winning_player, self.test_trick_1_club_expected_win_seat)
+
+    def test_score_trick_test_trick_1_heart(self):
+        """
+        No trump cards played, high card wins
+        """
+        self.test_trick_1.score_trick(euchre.HEART)
+        self.assertEqual(self.test_trick_1.winning_player, self.test_trick_1_heart_expected_win_seat)
