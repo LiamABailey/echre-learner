@@ -46,10 +46,9 @@ class Hand:
             None
 
         """
-            if len(self.tricks) > NUM_TRICKS:
-                raise ValueError("Attempting to add unexpected trick!")
-            self.tricks.append(played_trick)
-
+        if len(self.tricks) > NUM_TRICKS:
+            raise ValueError("Attempting to add unexpected trick!")
+        self.tricks.append(played_trick)
 
     def score_hand(self) -> None:
         """
@@ -77,10 +76,18 @@ class Hand:
             num_wins = NUM_TRICKS - num_wins
         self._calc_points(num_wins, self.bidder in TEAMS[self.winning_team])
 
-
-    def _calc_points(num_tricks_won: int, is_bidder: bool) - > int:
+    @staticmethod
+    def _calc_points(num_tricks_won: int, is_bidder: bool) -> int:
         """
         Calculate the number of points won by the team
+
+        # bidder:
+            < 2: 0 points
+            3-4: 1 point
+            5: 2 points
+        # not bidder:
+            < 2: 0 points
+            > 2: 2 points
 
         Parameters
         ----------
@@ -91,8 +98,8 @@ class Hand:
                 If the team contained the bidder
         """
         n_points = 0
-        if num_tricks_won > 3:
-            if num_tricks_won or not is_bidder:
+        if num_tricks_won >= 3:
+            if num_tricks_won == 5 or not is_bidder:
                 n_points = 2
             else:
                 n_points = 1
