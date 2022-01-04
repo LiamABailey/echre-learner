@@ -7,6 +7,38 @@ class TestAddTrick(unittest.TestCase):
     def setUp(self):
         self.hand = hand.Hand(0, euchre.DIAMOND)
 
+        def test_add_trick_empty_hand(self):
+            """
+            Add a trick to an empty hand
+            """
+            self.hand.add_trick(trick.Trick())
+            expected = hand.Hand()
+            expected.tricks.append(trick.Trick())
+
+            self.assertEqual(self.hand, expected)
+
+        def test_add_trick_partial_hand(self):
+            """
+            Add a trick to a non-empty hand
+            """
+            self.hand.append(trick.Trick())
+            self.hand.add_trick(trick.Trick())
+            expected = hand.Hand()
+            expected.tricks.extend([trick.Trick(), trick.Trick()])
+
+            self.assertEqual(self.hand, expected)
+
+        def test_add_trick_overfull_hand(self):
+            """
+            Add a trick to a hand at the hand size to encounter
+            and exception
+            """
+            for _ in range(euchre.NUM_TRICKS):
+                self.hand.append(trick.Trick())
+
+            with self.assertRaises(ValueError):
+                self.hand.add_trick(trick.Trick())
+
 
 class TestCalcPoints(unittest.TestCase):
 
