@@ -118,4 +118,59 @@ class TestCalcPoints(unittest.TestCase):
 class TestScoreHand(unittest.TestCase):
 
     def setUp(self):
-        self.hand = hand.Hand(0, euchre.DIAMOND)
+        self.t0_win_3 = hand.Hand(0, euchre.DIAMOND)
+        self.t0_win_5 = hand.Hand(0, euchre.SPADE)
+        self.t1_win_3 = hand.Hand(0, euchre.HEART)
+        self.t1_win_5 = hand.Hand(0, euchre.CLUB)
+
+
+
+    def test_score_hand_team_zero_three_bidder(self):
+        """
+        Test score hand when team zero wins w/ 3 tricks, is bidder
+        """
+        raise NotImplementedError
+
+    def test_score_hand_team_zero_three_not_bidder(self):
+        """
+        Test score hand when team zero wins w/ 3 tricks, not bidder
+        """
+        raise NotImplementedError
+
+    def test_score_hand_team_one_three(self):
+        """
+        Test score hand when team one wins w/ 3 tricks
+        """
+        raise NotImplementedError
+
+    def test_score_hand_team_zero_five_bidder(self):
+        """
+        Test score hand when team zero wins w/ 5 tricks, is bidder
+        """
+        raise NotImplementedError
+
+    def test_score_hand_team_zero_five_not_bidder(self):
+        """
+        Test score hand when team zero wins w/ 5 tricks, isn't bidder
+        """
+        raise NotImplementedError
+
+    def test_score_hand_team_one_five(self):
+        """
+        Test score hand when team one wins w/ 5 tricks
+        """
+        raise NotImplementedError
+
+    def test_score_hand_premature(self):
+        """
+        Validate exception behavior when attempting to score a hand
+        where one of
+        """
+        raise NotImplementedError
+
+    def test_score_hand_unscored_trick(self):
+        """
+        Validate exception behavior when attempting to score
+        a hand where one of the tricks is unscored
+        """
+        raise NotImplementedError

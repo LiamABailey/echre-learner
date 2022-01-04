@@ -64,6 +64,8 @@ class Hand:
             None
         """
         num_wins = 0
+        if len(tricks) != NUM_TRICKS:
+            raise ValueError(f"Expected {num_tricks} tricks, saw {len(tricks)}")
         for trick in tricks:
             if trick.winning_player is None:
                 raise UnscoredTrickException

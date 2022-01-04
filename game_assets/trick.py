@@ -5,6 +5,11 @@ from typing import Union
 from .card import Card
 from .euchre import NUM_PLAYERS
 
+
+class UnscoredTrickException(Exception):
+    pass
+
+
 @dataclass
 class PlayedCard:
     card: Card
