@@ -1,6 +1,6 @@
 import unittest
 
-from game_assets import euchre, hand, trick
+from game_assets import euchre, hand, trick, euchre
 
 class TestAddTrick(unittest.TestCase):
 
@@ -118,47 +118,87 @@ class TestCalcPoints(unittest.TestCase):
 class TestScoreHand(unittest.TestCase):
 
     def setUp(self):
-        self.t0_win_3 = hand.Hand(0, euchre.DIAMOND)
-        self.t0_win_5 = hand.Hand(0, euchre.SPADE)
-        self.t1_win_3 = hand.Hand(0, euchre.HEART)
-        self.t1_win_5 = hand.Hand(0, euchre.CLUB)
+        """
+        Construct tricks for adding to hands
+        """
+        t0_win_trick = trick.Trick()
+        t0_win_trick.winning_player = euchre.TEAM_ZERO[0]
+        t1_win_trick = trick.Trick()
+        t1_win_trick.winning_player = euchre.TEAM_ONE[0]
 
-
+        self.t0_win3_tricks = [
+            t0_win_trick,
+            t0_win_trick,
+            t1_win_trick,
+            t0_win_trick,
+            t1_win_trick
+        ]
+        self.t0_win_4_tricks = [t0_win_trick] * 3 + [t1_win_trick, t0_win_trick]
+        self.t0_win_5_tricks = [t0_win_trick] * 5
+        self.t1_win3_tricks = [
+            t0_win_trick,
+            t1_win_trick,
+            t1_win_trick,
+            t0_win_trick,
+            t1_win_trick
+        ]
+        self.t1_win_5_tricks = [t1_win_trick] * 5
 
     def test_score_hand_team_zero_three_bidder(self):
         """
         Test score hand when team zero wins w/ 3 tricks, is bidder
         """
+        t0_win_3 = hand.Hand(0, euchre.DIAMOND)
+        t0_win_3.tricks = self.t0_win3_tricks
+        expected = hand.Hand(0, euchre.DIAMOND)
+        expected.tricks = self.t0_win3_tricks
+        expected.winning_team = euchre.TEAM_ZERO_ID
+        expected.points = 1
+
+        t0_win_3.score_hand()
+        self.assertEqual(t0_win_3, expected)
+
+
+    def test_score_hand_team_zero_four_bidder(self):
+        """
+        Test score hand when team zero wins w/ 4 tricks, is bidder
+        """
+        t0_win_3 = hand.Hand(0, euchre.DIAMOND)
         raise NotImplementedError
 
     def test_score_hand_team_zero_three_not_bidder(self):
         """
         Test score hand when team zero wins w/ 3 tricks, not bidder
         """
+        t0_win_3_nb = hand.Hand(1, euchre.HEART)
         raise NotImplementedError
 
     def test_score_hand_team_one_three(self):
         """
         Test score hand when team one wins w/ 3 tricks
         """
+        t1_win_3 = hand.Hand(1, euchre.HEART)
         raise NotImplementedError
 
     def test_score_hand_team_zero_five_bidder(self):
         """
         Test score hand when team zero wins w/ 5 tricks, is bidder
         """
+        t0_win_5 = hand.Hand(2, euchre.SPADE)
         raise NotImplementedError
 
     def test_score_hand_team_zero_five_not_bidder(self):
         """
         Test score hand when team zero wins w/ 5 tricks, isn't bidder
         """
+        t0_win_5_nb = hand.Hand(3, euchre.CLUB)
         raise NotImplementedError
 
     def test_score_hand_team_one_five(self):
         """
         Test score hand when team one wins w/ 5 tricks
         """
+        t0_win_5_nb = hand.Hand(3, euchre.CLUB)
         raise NotImplementedError
 
     def test_score_hand_premature(self):
@@ -166,6 +206,7 @@ class TestScoreHand(unittest.TestCase):
         Validate exception behavior when attempting to score a hand
         where one of
         """
+        short_hand = hand.Hand(0, euchre.CLUB)
         raise NotImplementedError
 
     def test_score_hand_unscored_trick(self):

@@ -1,6 +1,6 @@
 from typing import Union
 
-from .euchre import NUM_TRICKS, NUM_TRICKS_TO_WIN_HAND, TEAM_ZERO, TEAM_ZERO_ID, TEAM_ONE_ID
+from .euchre import NUM_TRICKS, NUM_TRICKS_TO_WIN_HAND, TEAM_ZERO, TEAM_ZERO_ID, TEAM_ONE_ID, TEAMS
 from .trick import Trick, UnscoredTrickException
 
 class Hand:
@@ -64,9 +64,9 @@ class Hand:
             None
         """
         num_wins = 0
-        if len(tricks) != NUM_TRICKS:
+        if len(self.tricks) != NUM_TRICKS:
             raise ValueError(f"Expected {num_tricks} tricks, saw {len(tricks)}")
-        for trick in tricks:
+        for trick in self.tricks:
             if trick.winning_player is None:
                 raise UnscoredTrickException
             if trick.winning_player in TEAM_ZERO:
@@ -78,7 +78,7 @@ class Hand:
             # invert - the previous tallying was performed with respect to
             # team zero winning
             num_wins = NUM_TRICKS - num_wins
-        self._calc_points(num_wins, self.bidder in TEAMS[self.winning_team])
+        self.points = self._calc_points(num_wins, self.bidder in TEAMS[self.winning_team])
 
     @staticmethod
     def _calc_points(num_tricks_won: int, is_bidder: bool) -> int:
@@ -109,3 +109,27 @@ class Hand:
                 n_points = 1
 
         return n_points
+
+
+    def __repr__(self):
+        return (f"Hand(trump:{self.trump}; bidder:{self.bidder}; winning_team:"
+                f"{self.winning_team}; points:{self.points}; "
+                f"tricks:{self.tricks})")
+
+    def __eq__(self, other):
+        """
+        Equality method
+        """
+        if not isinstance(other, Hand):
+           raise TypeError("Expected instance of hand.Hand")
+        tricks_eq = False
+        if len(self.tricks) == len(other.tricks):
+            tricks_eq = True
+            for trick_s, trick_o in zip(self.tricks, other.tricks):
+                print(trick_s, trick_o)
+                if trick_s != trick_o:
+                    tricks_eq = False
+
+        return (self.trump == other.trump) and (self.bidder == other.bidder) and\
+            (self.winning_team == other.winning_team) and\
+            (self.points == other.points) and tricks_eq

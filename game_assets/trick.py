@@ -80,3 +80,7 @@ class Trick:
             if high.card.lt_card(candidate.card, trump, leading_suit):
                 high = candidate
         self.winning_player = high.player
+
+    def __repr__(self):
+        return (f"Trick(lead_suit:{self.leading_suit}; "
+                f"winning_player:{self.winning_player}; cards:{self.played_cards})")
