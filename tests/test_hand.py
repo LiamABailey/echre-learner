@@ -143,6 +143,10 @@ class TestScoreHand(unittest.TestCase):
             t1_win_trick
         ]
         self.t1_win_5_tricks = [t1_win_trick] * 5
+        self.four_tricks = [t0_win_trick] * 4
+
+        unscored_trick = trick.Trick()
+        self.last_trick_unscored = [t1_win_trick] * 4 + [unscored_trick]
 
     def test_score_hand_team_zero_three_bidder(self):
         """
@@ -163,43 +167,83 @@ class TestScoreHand(unittest.TestCase):
         """
         Test score hand when team zero wins w/ 4 tricks, is bidder
         """
-        t0_win_3 = hand.Hand(0, euchre.DIAMOND)
-        raise NotImplementedError
+        t0_win_4 = hand.Hand(0, euchre.HEART)
+        t0_win_4.tricks = self.t0_win_4_tricks
+        expected = hand.Hand(0, euchre.HEART)
+        expected.tricks = self.t0_win_4_tricks
+        expected.winning_team = euchre.TEAM_ZERO_ID
+        expected.points = 1
+
+        t0_win_4.score_hand()
+        self.assertEqual(t0_win_4, expected)
 
     def test_score_hand_team_zero_three_not_bidder(self):
         """
         Test score hand when team zero wins w/ 3 tricks, not bidder
         """
-        t0_win_3_nb = hand.Hand(1, euchre.HEART)
-        raise NotImplementedError
+        t0_win_3_nb = hand.Hand(1, euchre.CLUB)
+        t0_win_3_nb.tricks = self.t0_win3_tricks
+        expected = hand.Hand(1, euchre.CLUB)
+        expected.tricks = self.t0_win3_tricks
+        expected.winning_team = euchre.TEAM_ZERO_ID
+        expected.points = 2
+
+        t0_win_3_nb.score_hand()
+        self.assertEqual(t0_win_3_nb, expected)
 
     def test_score_hand_team_one_three(self):
         """
         Test score hand when team one wins w/ 3 tricks
         """
-        t1_win_3 = hand.Hand(1, euchre.HEART)
-        raise NotImplementedError
+        t1_win_3 = hand.Hand(1, euchre.SPADE)
+        t1_win_3.tricks = self.t1_win3_tricks
+        expected = hand.Hand(1, euchre.SPADE)
+        expected.tricks = self.t1_win3_tricks
+        expected.winning_team = euchre.TEAM_ONE_ID
+        expected.points = 1
+
+        t1_win_3.score_hand()
+        self.assertEqual(t1_win_3, expected)
 
     def test_score_hand_team_zero_five_bidder(self):
         """
         Test score hand when team zero wins w/ 5 tricks, is bidder
         """
-        t0_win_5 = hand.Hand(2, euchre.SPADE)
-        raise NotImplementedError
+        t0_win_5 = hand.Hand(2, euchre.CLUB)
+        t0_win_5.tricks = self.t0_win_5_tricks
+        expected = hand.Hand(2, euchre.CLUB)
+        expected.tricks = self.t0_win_5_tricks
+        expected.winning_team = euchre.TEAM_ZERO_ID
+        expected.points = 2
+
+        t0_win_5.score_hand()
+        self.assertEqual(t0_win_5, expected)
 
     def test_score_hand_team_zero_five_not_bidder(self):
         """
         Test score hand when team zero wins w/ 5 tricks, isn't bidder
         """
         t0_win_5_nb = hand.Hand(3, euchre.CLUB)
-        raise NotImplementedError
+        t0_win_5_nb.tricks = self.t0_win_5_tricks
+        expected = hand.Hand(3, euchre.CLUB)
+        expected.tricks = self.t0_win_5_tricks
+        expected.winning_team = euchre.TEAM_ZERO_ID
+        expected.points = 2
+
+        t0_win_5_nb.score_hand()
+        self.assertEqual(t0_win_5_nb, expected)
+
 
     def test_score_hand_team_one_five(self):
         """
         Test score hand when team one wins w/ 5 tricks
         """
-        t0_win_5_nb = hand.Hand(3, euchre.CLUB)
-        raise NotImplementedError
+        t1_win_5 = hand.Hand(3, euchre.DIAMOND)
+        t1_win_5.tricks = self.t1_win_5_tricks
+        expected = hand.Hand(3, euchre.DIAMOND)
+        expected.tricks = self.t1_win_5_tricks
+        expected.winning_team = euchre.TEAM_ONE_ID
+        expected.points = 2
 
     def test_score_hand_premature(self):
         """
@@ -207,11 +251,18 @@ class TestScoreHand(unittest.TestCase):
         where one of
         """
         short_hand = hand.Hand(0, euchre.CLUB)
-        raise NotImplementedError
+        short_hand.tricks = self.four_tricks
+
+        with self.assertRaises(ValueError):
+            short_hand.score_hand()
 
     def test_score_hand_unscored_trick(self):
         """
         Validate exception behavior when attempting to score
         a hand where one of the tricks is unscored
         """
-        raise NotImplementedError
+        unscored_trick_hand = hand.Hand(1, euchre.HEART)
+        unscored_trick_hand.tricks = self.last_trick_unscored
+
+        with self.assertRaises(trick.UnscoredTrickException):
+            unscored_trick_hand.score_hand()

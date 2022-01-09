@@ -65,7 +65,7 @@ class Hand:
         """
         num_wins = 0
         if len(self.tricks) != NUM_TRICKS:
-            raise ValueError(f"Expected {num_tricks} tricks, saw {len(tricks)}")
+            raise ValueError(f"Expected {NUM_TRICKS} tricks, saw {len(self.tricks)}")
         for trick in self.tricks:
             if trick.winning_player is None:
                 raise UnscoredTrickException
@@ -126,7 +126,6 @@ class Hand:
         if len(self.tricks) == len(other.tricks):
             tricks_eq = True
             for trick_s, trick_o in zip(self.tricks, other.tricks):
-                print(trick_s, trick_o)
                 if trick_s != trick_o:
                     tricks_eq = False
 
