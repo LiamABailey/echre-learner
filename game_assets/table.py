@@ -1,7 +1,10 @@
-from typing import Tuple
+from itertools import product
+from random import shuffle
+from typing import Dict, Tuple
 
+from .card import Card
 from .player import Player
-from .euchre import NUM_PLAYERS, NUM_TRICKS
+from .euchre import NUM_PLAYERS, NUM_TRICKS, SUITS, CARD_FACES
 
 class Table:
     """
@@ -30,6 +33,7 @@ class Table:
         self.dealer = 0
         self.team1_score = 0
         self.team2_score = 0
+        self.deck = [Card(suit, face) for suit, face in product(SUITS, CARD_FACES)]
 
 
     def get_scores(self) -> Tuple[int,int]:
@@ -59,19 +63,57 @@ class Table:
         -------
             None
         """
-        pass
-        # deal
+        # deal out cards
+        kitty_face_up = self._deal()
         # choose trump
         for _ in range(NUM_TRICKS):
             self._play_trick()
 
 
-    def _deal(self):
+    def _deal(self) -> Card:
         """
         Deal a hand of cards
-        """
-        pass
 
+        Parameters
+        ----------
+            None
+
+        Returns
+        -------
+            Card : the face-up card in the kitty
+
+        """
+        # shuffle the deck
+        shuffle(self.deck)
+        # hand out cards
+        for p_ix, player in enumerate(self.players):
+            start_ix = p_ix * NUM_TRICKS
+            player.receive_cards(self.deck[start_ix:start_ix + NUM_TRICKS])
+        # return the kitty, which is the 21st card in the deck
+        return self.deck[NUM_PLAYERS * NUM_TRICKS]
+
+    def _pick_trump(self, kitty_card) -> Dict:
+        """
+        Have the four players perform trump selection
+
+        Paramters
+        ~~~~~~~~~
+            kitty_card : Card
+                The face-up card in the kitty
+        Returns
+        ~~~~~~~
+            Dictonary of results (k,v):
+                "trump" : str
+                    The selected trump suit
+                "selector" : int
+                    The player ID of the player that selected trump
+        """
+        # because dealer is tracked positionally to the player list, we can
+        # leverage that position to rotate the player order as needed
+        player_order = self.players[self.dealer:] + self.players[:self.dealer]
+        # TODO : design selection on first pass
+        # TODO : design selection on second pass
+        # TODO : define pick-up for dealer
 
     def _play_trick(self):
         """
