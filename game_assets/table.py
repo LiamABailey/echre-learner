@@ -107,6 +107,8 @@ class Table:
                     The selected trump suit
                 "selector" : int
                     The player ID of the player that selected trump
+                "pick_up" : bool
+                    True if kitty card picked up, false otherwise
         """
         # because dealer is tracked positionally to the player list, we can
         # leverage that position to rotate the player order as needed
@@ -128,7 +130,7 @@ class Table:
                 pick_up = self.players[player].select_kitty_pickup(kitty_card, True, True)
             if pick_up:
                 selector = player
-                # todo : dealer has to exchange a card
+                self.players[self.dealer].exchange_with_kitty(kitty_card)
                 break
         if not pick_up:
             # kitty has been turned down
@@ -145,7 +147,7 @@ class Table:
                     selector = player
                     break
 
-        return {"trump": trump_suit, "selector": selector}
+        return {"trump": trump_suit, "selector": selector, "pick_up": pick_up}
 
 
     def _play_trick(self):

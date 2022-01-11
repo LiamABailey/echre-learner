@@ -37,6 +37,23 @@ class Player(ABC):
         self.cards_held = cards
 
     @abstractmethod
+    def exchange_with_kitty(self, kitty_card):
+        """
+        Method controlling dealer's adding of kitty_card to the hand,
+        and discarding of a card
+
+        Parameters
+        ----------
+            kitty_card : card.Card
+                The face-up card in the kitty added to hand
+
+        Returns
+        -------
+            None
+        """
+            raise NotImplementedError
+
+    @abstractmethod
     def select_kitty_pickup(self, kitty_card : Card, is_dealer: bool,
                             dealer_is_team_member: bool) -> bool:
         """
