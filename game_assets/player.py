@@ -37,13 +37,17 @@ class Player(ABC):
         self.cards_held = cards
 
     @abstractmethod
-    def select_kitty_pickup(self, is_dealer: bool, dealer_is_team_member: bool) -> bool:
+    def select_kitty_pickup(self, kitty_card : Card, is_dealer: bool,
+                            dealer_is_team_member: bool) -> bool:
         """
         Evaluates the face-up card in the kitty, and
         provides a decision as to if the dealer should pick up the card
 
         Parameters
         ----------
+            kitty_card : card.Card
+                The face-up card in the kitty
+
             is_dealer : bool
                 If the player is in the dealer's seat
 
