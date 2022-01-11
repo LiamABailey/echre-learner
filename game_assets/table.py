@@ -94,7 +94,7 @@ class Table:
 
     def _pick_trump(self, kitty_card) -> Dict:
         """
-        Have the four players perform trump selection
+        Have the four players perform trump selection (the calling round)
 
         Paramters
         ~~~~~~~~~
@@ -110,10 +110,43 @@ class Table:
         """
         # because dealer is tracked positionally to the player list, we can
         # leverage that position to rotate the player order as needed
-        player_order = self.players[self.dealer:] + self.players[:self.dealer]
-        # TODO : design selection on first pass
-        # TODO : design selection on second pass
-        # TODO : define pick-up for dealer
+        start_ix = (self.dealer + 1) % NUM_PLAYERS
+        player_order = self.players[start_ix:] + self.players[:start_ix]
+        pick_up = False
+
+        trump_suit = kitty_card.suit
+        selector = -1
+
+        # kitty round
+        for p_ix, player in enumerate(player_order):
+            # first and third
+            if p_ix % 2 != 0:
+                pick_up = self.players[player].select_kitty_pickup(kitty_card, False, False)
+            elif p_ix == 2:
+                pick_up = self.players[player].select_kitty_pickup(kitty_card, False, True)
+            else:
+                pick_up = self.players[player].select_kitty_pickup(kitty_card, True, True)
+            if pick_up:
+                selector = player
+                # todo : dealer has to exchange a card
+                break
+        if not pick_up:
+            # kitty has been turned down
+            passed_suit = trump_suit
+            selected = False
+            for player in player_order:
+                # first and third
+                if player == self.dealer
+                    suit, _ = self.players[player].select_trump(passed_suit, True)
+                else:
+                    suit, selected = self.players[player].select_trump(passed_suit, False)
+                if selected:
+                    trump_suit = suit
+                    selector = player
+                    break
+
+        return {"trump": trump_suit, "selector": selector}
+
 
     def _play_trick(self):
         """
