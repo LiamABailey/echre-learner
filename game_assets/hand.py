@@ -1,11 +1,13 @@
 from typing import Union
 
+from .card import Card
 from .euchre import NUM_TRICKS, NUM_TRICKS_TO_WIN_HAND, TEAM_ZERO, TEAM_ZERO_ID, TEAM_ONE_ID, TEAMS
 from .trick import Trick, UnscoredTrickException
 
 class Hand:
 
-    def __init__(self, bidder: int, trump: Union[int,str]) -> None:
+    def __init__(self, bidder: int, trump: str,
+                kitty_face_up: Card, kitty_picked_up : bool) -> None:
         """
         Hand constructor (encapsulating 5 tricks). Requires specification of
         the trump suit
@@ -15,9 +17,14 @@ class Hand:
             bidder : int
                 the seat index of the bidder (player who chose trump)
 
-            trump : int or str
+            trump : str
                 One of the suits in euchre.SUITS
 
+            kitty_face_up :
+                The face-up card evaluated in the first round of bidding
+
+            kitty_picked_up :
+                If the face-up card was picked up or passed on
 
 
         Returns
@@ -27,6 +34,8 @@ class Hand:
         self.tricks = []
         self.trump = trump
         self.bidder = bidder
+        self.kitty_face_up = kitty_face_up
+        self.kitty_picked_up = kitty_picked_up
         # define winning defaults
         self.winning_team = None
         self.points = 0

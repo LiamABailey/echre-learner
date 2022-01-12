@@ -1,11 +1,12 @@
 import unittest
 
-from game_assets import euchre, hand, trick, euchre
+from game_assets import card, euchre, hand, trick, euchre
 
 class TestAddTrick(unittest.TestCase):
 
     def setUp(self):
-        self.hand = hand.Hand(0, euchre.DIAMOND)
+        self.hand = hand.Hand(0, euchre.DIAMOND,
+                    card.Card(euchre.DIAMOND, euchre.ACE), True)
 
         def test_add_trick_empty_hand(self):
             """
@@ -152,9 +153,9 @@ class TestScoreHand(unittest.TestCase):
         """
         Test score hand when team zero wins w/ 3 tricks, is bidder
         """
-        t0_win_3 = hand.Hand(0, euchre.DIAMOND)
+        t0_win_3 = hand.Hand(0, euchre.DIAMOND, card.Card(euchre.DIAMOND, euchre.ACE), True)
         t0_win_3.tricks = self.t0_win3_tricks
-        expected = hand.Hand(0, euchre.DIAMOND)
+        expected = hand.Hand(0, euchre.DIAMOND, card.Card(euchre.DIAMOND, euchre.ACE), True)
         expected.tricks = self.t0_win3_tricks
         expected.winning_team = euchre.TEAM_ZERO_ID
         expected.points = 1
@@ -167,9 +168,9 @@ class TestScoreHand(unittest.TestCase):
         """
         Test score hand when team zero wins w/ 4 tricks, is bidder
         """
-        t0_win_4 = hand.Hand(0, euchre.HEART)
+        t0_win_4 = hand.Hand(0, euchre.HEART, card.Card(euchre.DIAMOND, euchre.ACE), True)
         t0_win_4.tricks = self.t0_win_4_tricks
-        expected = hand.Hand(0, euchre.HEART)
+        expected = hand.Hand(0, euchre.HEART, card.Card(euchre.DIAMOND, euchre.ACE), True)
         expected.tricks = self.t0_win_4_tricks
         expected.winning_team = euchre.TEAM_ZERO_ID
         expected.points = 1
@@ -181,9 +182,9 @@ class TestScoreHand(unittest.TestCase):
         """
         Test score hand when team zero wins w/ 3 tricks, not bidder
         """
-        t0_win_3_nb = hand.Hand(1, euchre.CLUB)
+        t0_win_3_nb = hand.Hand(1, euchre.CLUB, card.Card(euchre.DIAMOND, euchre.ACE), True)
         t0_win_3_nb.tricks = self.t0_win3_tricks
-        expected = hand.Hand(1, euchre.CLUB)
+        expected = hand.Hand(1, euchre.CLUB, card.Card(euchre.DIAMOND, euchre.ACE), True)
         expected.tricks = self.t0_win3_tricks
         expected.winning_team = euchre.TEAM_ZERO_ID
         expected.points = 2
@@ -195,9 +196,9 @@ class TestScoreHand(unittest.TestCase):
         """
         Test score hand when team one wins w/ 3 tricks
         """
-        t1_win_3 = hand.Hand(1, euchre.SPADE)
+        t1_win_3 = hand.Hand(1, euchre.SPADE,  card.Card(euchre.DIAMOND, euchre.ACE), True)
         t1_win_3.tricks = self.t1_win3_tricks
-        expected = hand.Hand(1, euchre.SPADE)
+        expected = hand.Hand(1, euchre.SPADE,  card.Card(euchre.DIAMOND, euchre.ACE), True)
         expected.tricks = self.t1_win3_tricks
         expected.winning_team = euchre.TEAM_ONE_ID
         expected.points = 1
@@ -209,9 +210,9 @@ class TestScoreHand(unittest.TestCase):
         """
         Test score hand when team zero wins w/ 5 tricks, is bidder
         """
-        t0_win_5 = hand.Hand(2, euchre.CLUB)
+        t0_win_5 = hand.Hand(2, euchre.CLUB,  card.Card(euchre.DIAMOND, euchre.ACE), True)
         t0_win_5.tricks = self.t0_win_5_tricks
-        expected = hand.Hand(2, euchre.CLUB)
+        expected = hand.Hand(2, euchre.CLUB,  card.Card(euchre.DIAMOND, euchre.ACE), True)
         expected.tricks = self.t0_win_5_tricks
         expected.winning_team = euchre.TEAM_ZERO_ID
         expected.points = 2
@@ -223,9 +224,9 @@ class TestScoreHand(unittest.TestCase):
         """
         Test score hand when team zero wins w/ 5 tricks, isn't bidder
         """
-        t0_win_5_nb = hand.Hand(3, euchre.CLUB)
+        t0_win_5_nb = hand.Hand(3, euchre.CLUB,  card.Card(euchre.DIAMOND, euchre.ACE), True)
         t0_win_5_nb.tricks = self.t0_win_5_tricks
-        expected = hand.Hand(3, euchre.CLUB)
+        expected = hand.Hand(3, euchre.CLUB,  card.Card(euchre.DIAMOND, euchre.ACE), True)
         expected.tricks = self.t0_win_5_tricks
         expected.winning_team = euchre.TEAM_ZERO_ID
         expected.points = 2
@@ -238,9 +239,9 @@ class TestScoreHand(unittest.TestCase):
         """
         Test score hand when team one wins w/ 5 tricks
         """
-        t1_win_5 = hand.Hand(3, euchre.DIAMOND)
+        t1_win_5 = hand.Hand(3, euchre.DIAMOND,  card.Card(euchre.DIAMOND, euchre.ACE), True)
         t1_win_5.tricks = self.t1_win_5_tricks
-        expected = hand.Hand(3, euchre.DIAMOND)
+        expected = hand.Hand(3, euchre.DIAMOND,  card.Card(euchre.DIAMOND, euchre.ACE), True)
         expected.tricks = self.t1_win_5_tricks
         expected.winning_team = euchre.TEAM_ONE_ID
         expected.points = 2
@@ -250,7 +251,7 @@ class TestScoreHand(unittest.TestCase):
         Validate exception behavior when attempting to score a hand
         where one of
         """
-        short_hand = hand.Hand(0, euchre.CLUB)
+        short_hand = hand.Hand(0, euchre.CLUB,  card.Card(euchre.DIAMOND, euchre.ACE), True)
         short_hand.tricks = self.four_tricks
 
         with self.assertRaises(ValueError):
@@ -261,7 +262,7 @@ class TestScoreHand(unittest.TestCase):
         Validate exception behavior when attempting to score
         a hand where one of the tricks is unscored
         """
-        unscored_trick_hand = hand.Hand(1, euchre.HEART)
+        unscored_trick_hand = hand.Hand(1, euchre.HEART,  card.Card(euchre.DIAMOND, euchre.ACE), True)
         unscored_trick_hand.tricks = self.last_trick_unscored
 
         with self.assertRaises(trick.UnscoredTrickException):
