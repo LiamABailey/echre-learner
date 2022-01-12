@@ -4,7 +4,7 @@ from typing import Dict, Tuple
 
 from .card import Card
 from .player import Player
-from .euchre import NUM_PLAYERS, NUM_TRICKS, SUITS, CARD_FACES
+from .euchre import NUM_PLAYERS, NUM_TRICKS, SUITS, CARD_FACES, TEAM_ZERO_ID, TEAM_ONE_ID
 
 class Table:
     """
@@ -30,9 +30,15 @@ class Table:
         """
         self.scorer = scorer
         self.players = [p1, p2, p3, p4]
+        p1.assign_seat(0)
+        p2.assign_seat(1)
+        p3.assign_seat(2)
+        p4.assign_seat(3)
         self.dealer = 0
-        self.team1_score = 0
-        self.team2_score = 0
+        self.scores = {
+            euchre.TEAM_ZERO_ID: 0,
+            euchre.TEAM_ONE_ID: 1
+        }
         self.deck = [Card(suit, face) for suit, face in product(SUITS, CARD_FACES)]
 
 
@@ -48,8 +54,7 @@ class Table:
             int : the current score for the first team (players 1 and 3)
             int : the current score for the second team (players 2 and 4)
         """
-        return self.team1_score, self.team2_score
-
+        return [self.scores[k] for k in [euchre.TEAM_ZERO_ID, euchre.TEAM_ONE_ID]]
 
     def play_hand(self):
         """
@@ -65,10 +70,18 @@ class Table:
         """
         # deal out cards
         kitty_face_up = self._deal()
-        # choose trump
+        pick_vals = _pick_trump(kitty_face_up)
+        round_hand = Hand(pick_vals["trump"], pick_vals["bidder"],
+                            kitty_face_up, pick_vals["pick_up"])
         for _ in range(NUM_TRICKS):
-            self._play_trick()
-
+            # play the trick
+            played_trick = self._play_trick()
+            # score the trick
+            played_trick.score_trick()
+            round_hand.add_trick(played_trick)
+        round_hand.score_hand()
+        # increment scores
+        self.scores[round_hand.winning_team] += round_hand.points
 
     def _deal(self) -> Card:
         """
@@ -105,7 +118,7 @@ class Table:
             Dictonary of results (k,v):
                 "trump" : str
                     The selected trump suit
-                "selector" : int
+                "bidder" : int
                     The player ID of the player that selected trump
                 "pick_up" : bool
                     True if kitty card picked up, false otherwise
@@ -147,12 +160,20 @@ class Table:
                     selector = player
                     break
 
-        return {"trump": trump_suit, "selector": selector, "pick_up": pick_up}
+        return {"trump": trump_suit, "bidder": selector, "pick_up": pick_up}
 
 
-    def _play_trick(self):
+    def _play_trick(self) -> Trick:
         """
         Have the 4 players play a single trick.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+            trick.Trick : the played & scored trick
+
         """
         pass
 
