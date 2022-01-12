@@ -2,6 +2,8 @@ from abc import ABC
 from typing import List, Tuple
 
 from .card import Card
+from .hand import Hand
+from .trick import Trick
 
 
 class Player(ABC):
@@ -17,7 +19,14 @@ class Player(ABC):
                 The player's ID
         """
         self.player_id = id
+        self.seat = None
         self.cards_held = []
+
+    def assign_seat(self, seat_ix:int):
+        """
+        Assign the seat postion to the player
+        """
+        self.seat = seat_ix
 
 
     def receive_cards(self, cards: List[Card]):
@@ -37,7 +46,7 @@ class Player(ABC):
         self.cards_held = cards
 
     @abstractmethod
-    def exchange_with_kitty(self, kitty_card):
+    def exchange_with_kitty(self, kitty_card: Card) -> None:
         """
         Method controlling dealer's adding of kitty_card to the hand,
         and discarding of a card
@@ -51,7 +60,42 @@ class Player(ABC):
         -------
             None
         """
-            raise NotImplementedError
+        raise NotImplementedError
+
+    @abstractmethod
+    def play_card(self, active_hand: Hand, active_trick: Trick, dealer_seat: int, lead_seat: int):
+        """
+        Given the known information about the game:
+            - played tricks
+            - the trick currently being played
+            - the kitty card (and if it was passed)
+            - the face-up card in the dealer's hand
+            - the dealer's seat
+            - the seat of the player who starts the trick
+            - the player's current hand
+         selects a card to play, removing it from the player's hand and
+         returning it
+
+        Parameters
+        ----------
+            active_hand : Hand.hand
+                The hand currently being played
+
+            active_trick : Trick.trick
+                The trick currently being played
+
+            dealer_seat : int
+                The seat of the dealer player, 0-3
+
+            lead_seat : int
+                The seat of the player who started the trick
+
+        Returns
+        -------
+            Card.card : The card played by the player (popped from 'cards_held')
+
+        """
+        raise NotImplementedError
 
     @abstractmethod
     def select_kitty_pickup(self, kitty_card : Card, is_dealer: bool,
