@@ -76,9 +76,9 @@ class Table:
                             kitty_face_up, pick_vals["pick_up"])
         for _ in range(NUM_TRICKS):
             # play the trick
-            played_trick = self._play_trick()
+            played_trick = self._play_trick(round_hand)
             # score the trick
-            played_trick.score_trick()
+            played_trick.score_trick(pick_vals["trump"])
             round_hand.add_trick(played_trick)
         round_hand.score_hand()
         # increment scores
@@ -164,21 +164,31 @@ class Table:
         return {"trump": trump_suit, "bidder": selector, "pick_up": pick_up}
 
 
-    def _play_trick(self, trump: int) -> Trick:
+    def _play_trick(self, active_hand: Hand) -> Trick:
         """
         Have the 4 players play a single trick.
 
         Parameters
         ----------
-            trump : int
-                The selected trump suit id from euchre.SUITS
-
+            active_hand : hand.Hand
+                The hand currently under play
         Returns
         -------
             trick.Trick : the played & scored trick
 
         """
-        raise NotImplementedError
+        active_trick = Trick()
+        # establish who plays first
+        first_player = self.dealer
+        if len(Hand.tricks) > 0:
+            first_player = Hand.tricks[-1].winning_player.seat
+        # each player plays their cards
+        for p in self.players[first_player:] + self.players[:first_player]:
+            played_card = p.play_card(hand, trick, self.dealer, first_player)
+            active_trick.add_card(played_card, p.seat)
+
+        return active_trick
+
 
 
     def _next_dealer(self):

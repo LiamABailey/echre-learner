@@ -63,7 +63,7 @@ class Player(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def play_card(self, active_hand: Hand, active_trick: Trick, dealer_seat: int, lead_seat: int):
+    def play_card(self, active_hand: Hand, active_trick: Trick, dealer_seat: int, lead_seat: int) -> Card:
         """
         Given the known information about the game:
             - played tricks
