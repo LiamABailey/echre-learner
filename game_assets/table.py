@@ -3,7 +3,8 @@ from random import shuffle
 from typing import Dict, Tuple
 
 from .card import Card
-from .player import Player
+from .players.player import Player
+from .trick import Trick
 from .euchre import NUM_PLAYERS, NUM_TRICKS, SUITS, CARD_FACES, TEAM_ZERO_ID, TEAM_ONE_ID
 
 class Table:
@@ -116,8 +117,8 @@ class Table:
         Returns
         ~~~~~~~
             Dictonary of results (k,v):
-                "trump" : str
-                    The selected trump suit
+                "trump" : int
+                    The selected trump suit id
                 "bidder" : int
                     The player ID of the player that selected trump
                 "pick_up" : bool
@@ -163,19 +164,21 @@ class Table:
         return {"trump": trump_suit, "bidder": selector, "pick_up": pick_up}
 
 
-    def _play_trick(self) -> Trick:
+    def _play_trick(self, trump: int) -> Trick:
         """
         Have the 4 players play a single trick.
 
         Parameters
         ----------
+            trump : int
+                The selected trump suit id from euchre.SUITS
 
         Returns
         -------
             trick.Trick : the played & scored trick
 
         """
-        pass
+        raise NotImplementedError
 
 
     def _next_dealer(self):

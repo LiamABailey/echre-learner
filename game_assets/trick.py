@@ -1,6 +1,5 @@
 from collections import namedtuple
 from dataclasses import dataclass
-from typing import Union
 
 from .card import Card
 from .euchre import NUM_PLAYERS
@@ -56,14 +55,14 @@ class Trick:
 
 
 
-    def score_trick(self, trump: Union[str, int]) -> None:
+    def score_trick(self, trump: int) -> None:
         """
         Identify the winning player of a trick
 
         Parameters
         ----------
-        trump : Union[str, int]
-            Selected trump suit. Must be in euchre.SUITS
+        trump : int
+            Selected trump suit id. Must be in euchre.SUITS
 
         Returns
         -------

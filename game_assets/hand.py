@@ -1,12 +1,10 @@
-from typing import Union
-
 from .card import Card
 from .euchre import NUM_TRICKS, NUM_TRICKS_TO_WIN_HAND, TEAM_ZERO, TEAM_ZERO_ID, TEAM_ONE_ID, TEAMS
 from .trick import Trick, UnscoredTrickException
 
 class Hand:
 
-    def __init__(self, bidder: int, trump: str,
+    def __init__(self, bidder: int, trump: int,
                 kitty_face_up: Card, kitty_picked_up : bool) -> None:
         """
         Hand constructor (encapsulating 5 tricks). Requires specification of
@@ -17,7 +15,7 @@ class Hand:
             bidder : int
                 the seat index of the bidder (player who chose trump)
 
-            trump : str
+            trump : int
                 One of the suits in euchre.SUITS
 
             kitty_face_up :

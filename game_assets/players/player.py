@@ -122,7 +122,7 @@ class Player(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def select_trump(self, passed_suit: string, is_dealer: bool) -> Tuple[str, bool]:
+    def select_trump(self, passed_suit: string, is_dealer: bool) -> Tuple[int, bool]:
         """
         The player evaluates the hand for the best suit to play. If
         not the dealer, may pass. Will not select the suit that was
@@ -138,7 +138,7 @@ class Player(ABC):
 
         Returns
         -------
-            str : The selected suit, if any
+            int : The selected suit, if any (from euchre.SUITS)
             bool : True if suit selected, false otherwise.
         """
         raise NotImplementedError
