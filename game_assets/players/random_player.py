@@ -1,4 +1,6 @@
+from numpy.random import choice, randint, random
 from .player import Player
+from .euchre import SUITS
 
 class RandomPlayer(Player):
     """
@@ -19,20 +21,14 @@ class RandomPlayer(Player):
         -------
             None
         """
-        raise NotImplementedError
+        card_ix = np.random.randint(low = 0, high = len(self.cards_held))
+        removed_card = self.cards_held.pop(card_ix)
+        self.cards_held.append(kitty_card)
+        return removed_card
 
     def play_card(self, active_hand: Hand, active_trick: Trick, dealer_seat: int, lead_seat: int) -> Card:
         """
-        Given the known information about the game:
-            - played tricks
-            - the trick currently being played
-            - the kitty card (and if it was passed)
-            - the face-up card in the dealer's hand
-            - the dealer's seat
-            - the seat of the player who starts the trick
-            - the player's current hand
-         selects a card to play, removing it from the player's hand and
-         returning it
+        Randomly selects a valid card to play, and plays it
 
         Parameters
         ----------
@@ -53,7 +49,13 @@ class RandomPlayer(Player):
             Card.card : The card played by the player (popped from 'cards_held')
 
         """
-        raise NotImplementedError
+        # if the player has a card of the eligible suit, we limit
+        # to cards of that suit
+        eligible_ix = range(len(self.cards_held))
+        if active_trick.leading_suit in [c.suit for c in self.cards_held]:
+            eligible_ix = [i for i,c in enumerate(self.cards_held) if c.suit == active_trick.leading_suit]
+        play_ix = choice(eligible_ix)
+        return self.cards_held.pop(play_ix)
 
     def select_kitty_pickup(self, kitty_card : Card, is_dealer: bool,
                             dealer_is_team_member: bool) -> bool:
@@ -76,7 +78,10 @@ class RandomPlayer(Player):
         -------
             bool : True if the card is to be picked up, false otherwise
         """
-        raise NotImplementedError
+        # 25% chance of calling pick up
+        if random() < 0.25:
+            return True
+        return False
 
     def select_trump(self, passed_suit: string, is_dealer: bool) -> Tuple[int, bool]:
         """
@@ -97,4 +102,8 @@ class RandomPlayer(Player):
             int : The selected suit, if any (from euchre.SUITS)
             bool : True if suit selected, false otherwise.
         """
-        raise NotImplementedError
+        # if stuck, or 25% chance otherwise
+        if is_dealer or random() < 0.25:
+            return choice(SUITS), True
+        else:
+            return None, False
