@@ -10,7 +10,7 @@ class RandomPlayer(Player):
     def exchange_with_kitty(self, kitty_card: Card) -> None:
         """
         Method controlling dealer's adding of kitty_card to the hand,
-        and discarding of a card
+        and discarding of a card. RandomPlayer picks at random.
 
         Parameters
         ----------
@@ -28,7 +28,7 @@ class RandomPlayer(Player):
 
     def play_card(self, active_hand: Hand, active_trick: Trick, dealer_seat: int, lead_seat: int) -> Card:
         """
-        Randomly selects a valid card to play, and plays it
+        Randomly selects a valid card to play, and plays it.
 
         Parameters
         ----------
@@ -60,8 +60,7 @@ class RandomPlayer(Player):
     def select_kitty_pickup(self, kitty_card : Card, is_dealer: bool,
                             dealer_is_team_member: bool) -> bool:
         """
-        Evaluates the face-up card in the kitty, and
-        provides a decision as to if the dealer should pick up the card
+        25% of the time, requests that the kitty is picked up. Othewise, passes.
 
         Parameters
         ----------
@@ -85,9 +84,8 @@ class RandomPlayer(Player):
 
     def select_trump(self, passed_suit: string, is_dealer: bool) -> Tuple[int, bool]:
         """
-        The player evaluates the hand for the best suit to play. If
-        not the dealer, may pass. Will not select the suit that was
-        passed during the face-up kitty round.
+        If the player is the dealer (or otherwise on a 25% chance), picks
+        a trump suit at random. Otherwise, passes the selection
 
         Parameters
         ----------
