@@ -38,7 +38,6 @@ class Hand:
         self.winning_team = None
         self.points = 0
 
-
     def add_trick(self, played_trick: Trick) -> None:
         """
         add a played and scored trick to the trick storer.

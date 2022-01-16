@@ -129,7 +129,6 @@ class TestScoreTrick(unittest.TestCase):
         for c, s in zip(test_trick_3_cards, test_trick_3_order):
             self.test_trick_3.add_card(c, s)
 
-
     def test_score_trick_not_fully_played(self):
         """
         Assert error raised when not scoring a fully-played trick

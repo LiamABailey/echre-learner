@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 from .card import Card
@@ -27,7 +27,6 @@ class Player(ABC):
         Assign the seat postion to the player
         """
         self.seat = seat_ix
-
 
     def receive_cards(self, cards: List[Card]):
         """

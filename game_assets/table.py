@@ -42,7 +42,6 @@ class Table:
         }
         self.deck = [Card(suit, face) for suit, face in product(SUITS, CARD_FACES)]
 
-
     def get_scores(self) -> Tuple[int,int]:
         """
         Return the current scores
@@ -163,7 +162,6 @@ class Table:
 
         return {"trump": trump_suit, "bidder": selector, "pick_up": pick_up}
 
-
     def _play_trick(self, active_hand: Hand) -> Trick:
         """
         Have the 4 players play a single trick.
@@ -188,8 +186,6 @@ class Table:
             active_trick.add_card(played_card, p.seat)
 
         return active_trick
-
-
 
     def _next_dealer(self):
         """

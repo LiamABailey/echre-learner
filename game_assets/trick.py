@@ -26,7 +26,6 @@ class Trick:
         self.played_cards = []
         self.winning_player = None
 
-
     def add_card(self, card: Card, player: int) -> None:
         """
         Track a played card
@@ -52,8 +51,6 @@ class Trick:
         if len(self.played_cards) == 0:
             self.leading_suit = card.suit
         self.played_cards.append(PlayedCard(card, player))
-
-
 
     def score_trick(self, trump: int) -> None:
         """

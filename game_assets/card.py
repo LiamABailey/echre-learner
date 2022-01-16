@@ -16,7 +16,6 @@ class Card:
         return (f"{FACE_DESCRIPTOR[self.face].capitalize()} of "
                 f"{SUIT_DESCRIPTOR[self.suit].capitalize()}s")
 
-
     def _is_left_bar(self, trump: Union[str, int]) -> bool:
         """
         Evaluate if the card is specifically the left bar of a given
@@ -50,7 +49,6 @@ class Card:
         if self.suit == trump or self._is_left_bar(trump):
             return True
         return False
-
 
     def lt_card(self, other: 'Card', trump: Union[str, int], lead: Union[str, int]) -> bool:
         """
