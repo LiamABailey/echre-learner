@@ -1,13 +1,18 @@
 from numpy.random import choice, randint, random
+from typing import Tuple
+
+from ..card import Card
+from ..hand import Hand
+from ..trick import Trick
 from .player import Player
-from .euchre import SUITS
+from ..euchre import SUITS
 
 class RandomPlayer(Player):
     """
     Euchre player that chooses cards randomly
     """
 
-    def exchange_with_kitty(self, kitty_card: Card) -> None:
+    def exchange_with_kitty(self, kitty_card: Card) -> Card:
         """
         Method controlling dealer's adding of kitty_card to the hand,
         and discarding of a card. RandomPlayer picks at random.
@@ -82,14 +87,14 @@ class RandomPlayer(Player):
             return True
         return False
 
-    def select_trump(self, passed_suit: string, is_dealer: bool) -> Tuple[int, bool]:
+    def select_trump(self, passed_suit: int, is_dealer: bool) -> Tuple[int, bool]:
         """
         If the player is the dealer (or otherwise on a 25% chance), picks
         a trump suit at random. Otherwise, passes the selection
 
         Parameters
         ----------
-            passed_suit : string
+            passed_suit : int
                 The suit-string passed in the kitty round (turned down)
 
             is_dealer : bool

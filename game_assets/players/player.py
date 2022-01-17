@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 
-from .card import Card
-from .hand import Hand
-from .trick import Trick
+from ..card import Card
+from ..hand import Hand
+from ..trick import Trick
 
 
 class Player(ABC):
@@ -40,7 +40,7 @@ class Player(ABC):
         -------
             None
         """
-        if len(cards) !=5
+        if len(cards) !=5:
             raise ValueError("Must receive five cards")
         self.cards_held = cards
 
@@ -121,7 +121,7 @@ class Player(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def select_trump(self, passed_suit: string, is_dealer: bool) -> Tuple[int, bool]:
+    def select_trump(self, passed_suit: int, is_dealer: bool) -> Tuple[int, bool]:
         """
         The player evaluates the hand for the best suit to play. If
         not the dealer, may pass. Will not select the suit that was
@@ -129,7 +129,7 @@ class Player(ABC):
 
         Parameters
         ----------
-            passed_suit : string
+            passed_suit : int
                 The suit-string passed in the kitty round (turned down)
 
             is_dealer : bool

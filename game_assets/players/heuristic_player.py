@@ -1,4 +1,7 @@
+from typing import Tuple
+
 from .player import Player
+
 
 class HeuristicPlayer(Player):
     """
@@ -78,7 +81,7 @@ class HeuristicPlayer(Player):
         """
         raise NotImplementedError
 
-    def select_trump(self, passed_suit: string, is_dealer: bool) -> Tuple[int, bool]:
+    def select_trump(self, passed_suit: int, is_dealer: bool) -> Tuple[int, bool]:
         """
         The player evaluates the hand for the best suit to play. If
         not the dealer, may pass. Will not select the suit that was
@@ -86,7 +89,7 @@ class HeuristicPlayer(Player):
 
         Parameters
         ----------
-            passed_suit : string
+            passed_suit : int
                 The suit-string passed in the kitty round (turned down)
 
             is_dealer : bool
