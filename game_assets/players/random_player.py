@@ -107,6 +107,6 @@ class RandomPlayer(Player):
         """
         # if stuck, or 25% chance otherwise
         if is_dealer or random() < 0.25:
-            return choice([s for s in SUITS if s != passed_card), True
+            return choice([s for s in SUITS if s != passed_card.suit]), True
         else:
             return None, False
