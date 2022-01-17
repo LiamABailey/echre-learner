@@ -87,15 +87,15 @@ class RandomPlayer(Player):
             return True
         return False
 
-    def select_trump(self, passed_suit: int, is_dealer: bool) -> Tuple[int, bool]:
+    def select_trump(self,  passed_card: Card, is_dealer: bool) -> Tuple[int, bool]:
         """
         If the player is the dealer (or otherwise on a 25% chance), picks
-        a trump suit at random. Otherwise, passes the selection
+        a trump suit at random (will not pick passed suit).
 
         Parameters
         ----------
-            passed_suit : int
-                The suit-string passed in the kitty round (turned down)
+            passed_card : card
+                The card passed in the kitty round (turned down)
 
             is_dealer : bool
                 If the player is in the dealer's seat (is stuck)
@@ -107,6 +107,6 @@ class RandomPlayer(Player):
         """
         # if stuck, or 25% chance otherwise
         if is_dealer or random() < 0.25:
-            return choice(SUITS), True
+            return choice([s for s in SUITS if s != passed_card), True
         else:
             return None, False
