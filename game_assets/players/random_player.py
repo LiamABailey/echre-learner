@@ -21,7 +21,7 @@ class RandomPlayer(Player):
         -------
             None
         """
-        card_ix = np.random.randint(low = 0, high = len(self.cards_held))
+        card_ix = randint(low = 0, high = len(self.cards_held))
         removed_card = self.cards_held.pop(card_ix)
         self.cards_held.append(kitty_card)
         return removed_card
