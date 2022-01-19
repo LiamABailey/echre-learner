@@ -7,7 +7,7 @@ methods have their drawbacks:
 
 For now, I'm using the first and third methods above, but other options will be researched. Tests
 of these simple methods serve *primarily* as testing practice, although some pieces of
-behavoir checking are valuable (e.g. 'doesn't return suit of kitty', `properly discards card`)
+behavior checking are valuable (e.g. 'doesn't return suit of kitty', `properly discards card`)
 """
 
 from itertools import product
@@ -15,7 +15,6 @@ from random import shuffle, choice
 from typing import List
 import unittest
 from unittest.mock import patch
-
 
 from game_assets.card import Card
 from game_assets.euchre import SUITS, CARD_FACES
