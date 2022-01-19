@@ -1,7 +1,20 @@
+"""
+Testing stochastic behavior is tricky, as it's hard to guarantee behavior. Different
+methods have their drawbacks:
+- Mocking radomness functions: Can break under code changes
+- Statistical testing of output distributions: Noisy - expect false positives at a rate of alpha
+- Boundary setting: Essentially a weaker version of statistical testing, with the potential for fewer FP
+
+For now, I'm using the first and third methods above, but other options will be researched. Tests
+of these simple methods serve *primarily* as testing practice, although some pieces of
+behavoir checking are valuable (e.g. 'doesn't return suit of kitty', `properly discards card`)
+"""
+
 from itertools import product
 from random import shuffle, choice
 from typing import List
 import unittest
+from unittest.mock import patch
 
 
 from game_assets.card import Card
@@ -82,6 +95,108 @@ class TestExchangeWithKitty(unittest.TestCase, ProportionAssert):
         self.assertCollectionProportionGreater([v/self.n_tests for v in returned_cards.values()],
                                         self.card_prop_threshold)
 
+
+class TestSelectKittyPickup(unittest.TestCase):
+    """
+    Tests that kitty pick up, performed via reference to random.random(), is
+    bounded within an acceptable range. (This could be done via inspection,
+    but is included as a thought exercise, as for more complex behavior inspection
+    may not suffice)
+    """
+
+    def assertCardPickProp(self):
+        for k in self.seen_kitty_cards:
+            prop_pickup = self.pickup_kitty_cards[k]/self.seen_kitty_cards[k]
+            self.assertGreater(prop_pickup, self.pickup_kitty_prop_min)
+            self.assertLess(prop_pickup, self.pickup_kitty_prop_min)
+
+    def setUp(self):
+        """
+        Set up the player
+        """
+        self.random_player = RandomPlayer(0)
+        self.low_thresh = 0.1
+        self.high_thresh = 0.9
+        self.deck = [Card(suit, face) for suit, face in product(SUITS, CARD_FACES)]
+        shuffle(self.deck)
+
+    def test_select_kitty_pickup_dealer_nopick(self):
+        """
+        Validate that a pickup signal of 'false' is returned at a high threshold
+        when player is dealer
+        """
+        kitty_card = self.deck[5]
+        with patch(self.random_patch_loc, return_value = self.high_thresh):
+            pick_up_signal = self.random_player.select_kitty_pickup(kitty_card,
+                                                                    True,
+                                                                    True)
+        self.assertFalse(pick_up_signal)
+
+    def test_select_kitty_pickup_partdealer_pick(self):
+        """
+        Validate that a pickup signal of 'true' is returned at a low threshold
+        when player is dealer
+        """
+
+        kitty_card = self.deck[5]
+        with patch(self.random_patch_loc, return_value = self.low_thresh):
+            pick_up_signal = self.random_player.select_kitty_pickup(kitty_card,
+                                                                    True,
+                                                                    True)
+        self.assertTrue(pick_up_signal)
+
+
+    def test_select_kitty_pickup_partner_dealer_nopick(self):
+        """
+        Validate that a pickup signal of 'false' is returned at a high threshold
+        when partner is dealer
+        """
+
+        kitty_card = self.deck[5]
+        with patch(self.random_patch_loc, return_value = self.high_thresh):
+            pick_up_signal = self.random_player.select_kitty_pickup(kitty_card,
+                                                                    False,
+                                                                    True)
+        self.assertFalse(pick_up_signal)
+
+    def test_select_kitty_pickup_partner_dealer_pick(self):
+        """
+        Validate that a pickup signal of 'true' is returned at a low threshold
+        when partner is dealer
+        """
+
+        kitty_card = self.deck[5]
+        with patch(self.random_patch_loc, return_value = self.low_thresh):
+            pick_up_signal = self.random_player.select_kitty_pickup(kitty_card,
+                                                                    False,
+                                                                    True)
+        self.assertTrue(pick_up_signal)
+
+    def test_select_kitty_pickup_opponent_dealer_nopick(self):
+        """
+        Validate that a pickup signal of 'false' is returned at a high threshold
+        when a player on the opposing team is the dealer
+        """
+
+        kitty_card = self.deck[5]
+        with patch(self.random_patch_loc, return_value = self.high_thresh):
+            pick_up_signal = self.random_player.select_kitty_pickup(kitty_card,
+                                                                    False,
+                                                                    False)
+        self.assertFalse(pick_up_signal)
+
+    def test_select_kitty_pickup_opponent_dealer_pick(self):
+        """
+        Validate that a pickup signal of 'true' is returned at a low threshold
+        when a player on the opposing team is the dealer
+        """
+
+        kitty_card = self.deck[5]
+        with patch(self.random_patch_loc, return_value = self.low_thresh):
+            pick_up_signal = self.random_player.select_kitty_pickup(kitty_card,
+                                                                    False,
+                                                                    False)
+        self.assertTrue(pick_up_signal)
 
 class TestSelectTrump(unittest.TestCase, ProportionAssert):
     """
