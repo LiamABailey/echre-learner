@@ -22,7 +22,7 @@ class Player(ABC):
         self.seat = None
         self.cards_held = []
 
-    def assign_seat(self, seat_ix:int):
+    def assign_seat(self, seat_ix: int):
         """
         Assign the seat postion to the player
         """
@@ -97,7 +97,7 @@ class Player(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def select_kitty_pickup(self, kitty_card : Card, is_dealer: bool,
+    def select_kitty_pickup(self, kitty_card: Card, is_dealer: bool,
                             dealer_is_team_member: bool) -> bool:
         """
         Evaluates the face-up card in the kitty, and
