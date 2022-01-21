@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 from ..card import Card
+from ..euchre import NUM_PLAYERS
 from ..hand import Hand
 from ..trick import Trick
 
@@ -26,6 +27,10 @@ class Player(ABC):
         """
         Assign the seat postion to the player
         """
+        if not isinstance(seat_ix, int) or isinstance(seat_ix, bool):
+            raise TypeError(f"Expected type int, received {type(seat_ix)} for seat_ix")
+        if seat_ix < 0 or seat_ix >= NUM_PLAYERS:
+            raise ValueError(f"Expect Seat to be between zero and {NUM_PLAYERS-1}, inclusive")
         self.seat = seat_ix
 
     def receive_cards(self, cards: List[Card]):
