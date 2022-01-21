@@ -1,11 +1,14 @@
+from itertools import product
 from typing import Tuple
 import unittest
 
 from game_assets.players.random_player import Player
 from game_assets.card import Card
-from game_assets.euchre import NUM_PLAYERS
+from game_assets.euchre import NUM_PLAYERS, SUITS, CARD_FACES
 from game_assets.hand import Hand
 from game_assets.trick import Trick
+
+import random
 
 class ConcretePlayer(Player):
     """
@@ -39,6 +42,7 @@ class TestAssignSeat(unittest.TestCase):
             with self.subTest():
                 self.player.assign_seat(seat_ix)
                 self.assertEqual(self.player.seat, seat_ix)
+                self.player.seat = None
 
     def test_assign_seat_invalid_ix(self):
         """
@@ -57,3 +61,60 @@ class TestAssignSeat(unittest.TestCase):
             with self.subTest():
                 with self.assertRaises(TypeError):
                     self.player.assign_seat(seat_ix)
+
+
+
+class receive_cards(unittest.TestCase):
+
+    def setUp(self):
+        self.player = ConcretePlayer(0)
+        self.deck = [Card(suit, face) for suit, face in product(SUITS, CARD_FACES)]
+
+    def test_receive_cards_valid(self):
+        """
+        Test that 5 cards accepted
+        """
+        hand_ixs = [
+            [0,1,2,3,4],
+            [2, 6, 10, 12, 16],
+            [0, 5, 10, 15, 20],
+            [19, 20, 21, 22, 23]
+        ]
+        for hand_ix_list in hand_ixs:
+            hand = [self.deck[i] for i in hand_ix_list]
+            with self.subTest():
+                self.player.receive_cards(hand)
+                self.assertCountEqual(self.player.cards_held, hand)
+                self.player.cards_held = []
+
+    def test_receive_cards_wrong_hand_size(self):
+        """
+        Test a series of bad hand sizes
+        """
+        hand_ixs = [
+            [],
+            [5],
+            [5, 6, 7, 8],
+            [10, 12, 14, 16, 18, 20]
+        ]
+        for hand_ix_list in hand_ixs:
+            hand = [self.deck[i] for i in hand_ix_list]
+            with self.subTest():
+                with self.assertRaises(ValueError):
+                    self.player.receive_cards(hand)
+
+    def test_receive_cards_bad_types(self):
+        """
+        Validate type errors raised when passed non-Card typed objects
+        """
+        hands = [
+            [1,2,3,4,5],
+            ["ace of hearts", "ace of spades", "ace of diamonds", "jack of clubs", "queen of hearts"],
+            [(0,2), (3,1), (2,4), (1,0), (0,5)],
+            [Card(0,0), Card(0,0), Card(0,0), Card(0,0), 0],
+            [1, Card(1,1), Card(1,1), Card(1,1), Card(1,1)]
+        ]
+        for hand in hands:
+            with self.subTest():
+                with self.assertRaises(TypeError):
+                    self.player.receive_cards(hand)

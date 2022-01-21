@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 from ..card import Card
-from ..euchre import NUM_PLAYERS
+from ..euchre import NUM_PLAYERS, NUM_TRICKS
 from ..hand import Hand
 from ..trick import Trick
 
@@ -45,8 +45,11 @@ class Player(ABC):
         -------
             None
         """
-        if len(cards) !=5:
-            raise ValueError("Must receive five cards")
+        if len(cards) !=NUM_TRICKS:
+            raise ValueError(f"Must receive {NUM_TRICKS} cards")
+        for e in cards:
+            if not isinstance(e, Card):
+                raise TypeError(f"Must receive a Card, received {type(e)}")
         self.cards_held = cards
 
     @abstractmethod
