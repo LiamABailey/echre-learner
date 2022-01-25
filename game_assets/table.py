@@ -3,16 +3,17 @@ from random import shuffle
 from typing import Dict, Tuple
 
 from .card import Card
+from .hand import Hand
 from .players.player import Player
 from .trick import Trick
 from .euchre import NUM_PLAYERS, NUM_TRICKS, SUITS, CARD_FACES, TEAM_ZERO_ID, TEAM_ONE_ID
 
 class Table:
     """
-    The game table, consisting of the scorer, and the four players.
+    The game table, consisting of the deck, score-keeping, and the four players.
+    Play is managed by the table.
     """
     def __init__(self,
-                scorer: Scorer,
                 p1: Player,
                 p2: Player,
                 p3: Player,
@@ -29,7 +30,6 @@ class Table:
             None
 
         """
-        self.scorer = scorer
         self.players = [p1, p2, p3, p4]
         p1.assign_seat(0)
         p2.assign_seat(1)
@@ -37,8 +37,8 @@ class Table:
         p4.assign_seat(3)
         self.dealer = 0
         self.scores = {
-            euchre.TEAM_ZERO_ID: 0,
-            euchre.TEAM_ONE_ID: 1
+            TEAM_ZERO_ID: 0,
+            TEAM_ONE_ID: 0
         }
         self.deck = [Card(suit, face) for suit, face in product(SUITS, CARD_FACES)]
 
@@ -54,7 +54,7 @@ class Table:
             int : the current score for the first team (players 1 and 3)
             int : the current score for the second team (players 2 and 4)
         """
-        return [self.scores[k] for k in [euchre.TEAM_ZERO_ID, euchre.TEAM_ONE_ID]]
+        return [self.scores[k] for k in [TEAM_ZERO_ID, TEAM_ONE_ID]]
 
     def play_hand(self):
         """
@@ -151,7 +151,7 @@ class Table:
             selected = False
             for player in player_order:
                 # first and third
-                if player == self.dealer
+                if player == self.dealer:
                     suit, _ = self.players[player].select_trump(passed_suit, True)
                 else:
                     suit, selected = self.players[player].select_trump(passed_suit, False)
