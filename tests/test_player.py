@@ -63,7 +63,6 @@ class TestAssignSeat(unittest.TestCase):
                     self.player.assign_seat(seat_ix)
 
 
-
 class receive_cards(unittest.TestCase):
 
     def setUp(self):

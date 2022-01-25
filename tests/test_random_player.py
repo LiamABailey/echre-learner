@@ -117,6 +117,7 @@ class TestSelectKittyPickup(unittest.TestCase):
         self.low_thresh = 0.1
         self.high_thresh = 0.9
         self.deck = [Card(suit, face) for suit, face in product(SUITS, CARD_FACES)]
+        self.random_patch_loc = "game_assets.players.random_player.random"
         shuffle(self.deck)
 
     def test_select_kitty_pickup_dealer_nopick(self):
