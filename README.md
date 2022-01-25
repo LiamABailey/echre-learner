@@ -36,3 +36,10 @@ five `Trick`s, with each trick consisting of four `Card`s.
 Unit tests are written for various parts of the package as a way to validate behavior. Although some of the tests were valuable to affirm proper behavior (such as for `lt_card`), many of these methods served as learning exercises (getting comfortable with `SubTest` and researching testing under stochastic behavior) or simply practice. Although these test will be useful (to some degree) if I decide to re-work the internal game mechanisms, I make the following notes:
   a. I am unlikely to do this in the first place. As long as the implementation is not reasonably inefficient, and is accurate/correct, I will likely not perform a major overhaul.
   b. A meaningful amount of the tests are bound (to some degree or another) to implementation particulars, meaning that they would have to be rewritten along with the relevant code.
+
+
+#### TODOS:
+  - Review of Random Agent Performance
+  - Verbosity flag to support insights into app behavior
+  - Implementation of heuristic-based player
+  - Implementation of RL-based player(s)

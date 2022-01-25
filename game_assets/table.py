@@ -82,6 +82,8 @@ class Table:
         round_hand.score_hand()
         # increment scores
         self.scores[round_hand.winning_team] += round_hand.points
+        # pass the deal
+        self._pass_deal()
 
     def _deal(self) -> Card:
         """
@@ -186,7 +188,7 @@ class Table:
 
         return active_trick
 
-    def _next_dealer(self):
+    def _pass_deal(self):
         """
         Pass the deal to the next dealer (positional)
         """
