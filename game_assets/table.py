@@ -70,7 +70,7 @@ class Table:
         """
         # deal out cards
         kitty_face_up = self._deal()
-        pick_vals = _pick_trump(kitty_face_up)
+        pick_vals = self._pick_trump(kitty_face_up)
         round_hand = Hand(pick_vals["trump"], pick_vals["bidder"],
                             kitty_face_up, pick_vals["pick_up"])
         for _ in range(NUM_TRICKS):
@@ -126,7 +126,7 @@ class Table:
         # because dealer is tracked positionally to the player list, we can
         # leverage that position to rotate the player order as needed
         start_ix = (self.dealer + 1) % NUM_PLAYERS
-        player_order = self.players[start_ix:] + self.players[:start_ix]
+        player_order = list(range(start_ix, NUM_PLAYERS)) + list(range(start_ix))
         pick_up = False
 
         trump_suit = kitty_card.suit
@@ -147,14 +147,13 @@ class Table:
                 break
         if not pick_up:
             # kitty has been turned down
-            passed_suit = trump_suit
             selected = False
             for player in player_order:
                 # first and third
                 if player == self.dealer:
-                    suit, _ = self.players[player].select_trump(passed_suit, True)
+                    suit, _ = self.players[player].select_trump(kitty_card, True)
                 else:
-                    suit, selected = self.players[player].select_trump(passed_suit, False)
+                    suit, selected = self.players[player].select_trump(kitty_card, False)
                 if selected:
                     trump_suit = suit
                     selector = player
@@ -178,11 +177,11 @@ class Table:
         active_trick = Trick()
         # establish who plays first
         first_player = self.dealer
-        if len(Hand.tricks) > 0:
-            first_player = Hand.tricks[-1].winning_player.seat
+        if len(active_hand.tricks) > 0:
+            first_player = active_hand.tricks[-1].winning_player_seat
         # each player plays their cards
         for p in self.players[first_player:] + self.players[:first_player]:
-            played_card = p.play_card(hand, trick, self.dealer, first_player)
+            played_card = p.play_card(active_hand, active_trick, self.dealer, first_player)
             active_trick.add_card(played_card, p.seat)
 
         return active_trick

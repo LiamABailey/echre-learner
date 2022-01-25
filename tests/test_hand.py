@@ -123,9 +123,9 @@ class TestScoreHand(unittest.TestCase):
         Construct tricks for adding to hands
         """
         t0_win_trick = trick.Trick()
-        t0_win_trick.winning_player = euchre.TEAM_ZERO[0]
+        t0_win_trick.winning_player_seat = euchre.TEAM_ZERO[0]
         t1_win_trick = trick.Trick()
-        t1_win_trick.winning_player = euchre.TEAM_ONE[0]
+        t1_win_trick.winning_player_seat = euchre.TEAM_ONE[0]
 
         self.t0_win3_tricks = [
             t0_win_trick,

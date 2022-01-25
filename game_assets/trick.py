@@ -12,7 +12,7 @@ class UnscoredTrickException(Exception):
 @dataclass
 class PlayedCard:
     card: Card
-    player: int
+    player_seat: int
 
 class Trick:
     """
@@ -24,7 +24,7 @@ class Trick:
         """
         self.leading_suit = None
         self.played_cards = []
-        self.winning_player = None
+        self.winning_player_seat = None
 
     def add_card(self, card: Card, player: int) -> None:
         """
@@ -75,7 +75,7 @@ class Trick:
         for candidate in self.played_cards[1:]:
             if high.card.lt_card(candidate.card, trump, leading_suit):
                 high = candidate
-        self.winning_player = high.player
+        self.winning_player_seat = high.player_seat
 
     def __repr__(self):
         return (f"Trick(lead_suit:{self.leading_suit}; "

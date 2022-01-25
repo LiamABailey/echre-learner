@@ -40,3 +40,11 @@ class TestGetScores(unittest.TestCase):
                 self.base_table.scores[TEAM_ONE_ID] = score_pair[1]
                 actual_scores = self.base_table.get_scores()
                 self.assertEqual(score_pair, actual_scores)
+
+"""
+Additional unit tests not provided - behavior will be indirectly validated
+by review. The author is aware that the above tests are not of particuarly
+high value given the relatively static nature of this project.
+
+See README.
+"""

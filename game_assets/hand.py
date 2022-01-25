@@ -73,9 +73,9 @@ class Hand:
         if len(self.tricks) != NUM_TRICKS:
             raise ValueError(f"Expected {NUM_TRICKS} tricks, saw {len(self.tricks)}")
         for trick in self.tricks:
-            if trick.winning_player is None:
+            if trick.winning_player_seat is None:
                 raise UnscoredTrickException
-            if trick.winning_player in TEAM_ZERO:
+            if trick.winning_player_seat in TEAM_ZERO:
                 num_wins += 1
         if num_wins >= NUM_TRICKS_TO_WIN_HAND:
             self.winning_team = TEAM_ZERO_ID

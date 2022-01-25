@@ -142,60 +142,60 @@ class TestScoreTrick(unittest.TestCase):
         Test of scoring for simple case - trump beats non-trump
         """
         self.test_trick_1.score_trick(euchre.DIAMOND)
-        self.assertEqual(self.test_trick_1.winning_player, self.test_trick_1_diamond_expected_win_seat)
+        self.assertEqual(self.test_trick_1.winning_player_seat, self.test_trick_1_diamond_expected_win_seat)
 
     def test_score_trick_test_trick_1_club(self):
         """
         Test of scoring - lead wins by size w/in trump
         """
         self.test_trick_1.score_trick(euchre.CLUB)
-        self.assertEqual(self.test_trick_1.winning_player, self.test_trick_1_club_expected_win_seat)
+        self.assertEqual(self.test_trick_1.winning_player_seat, self.test_trick_1_club_expected_win_seat)
 
     def test_score_trick_test_trick_1_heart(self):
         """
         No trump cards played, high card wins
         """
         self.test_trick_1.score_trick(euchre.HEART)
-        self.assertEqual(self.test_trick_1.winning_player, self.test_trick_1_heart_expected_win_seat)
+        self.assertEqual(self.test_trick_1.winning_player_seat, self.test_trick_1_heart_expected_win_seat)
 
     def test_score_trick_test_trick_2_club(self):
         """
         Test of scoring for right beats left, when left played first
         """
         self.test_trick_2.score_trick(euchre.CLUB)
-        self.assertEqual(self.test_trick_2.winning_player, self.test_trick_2_club_expected_win_seat)
+        self.assertEqual(self.test_trick_2.winning_player_seat, self.test_trick_2_club_expected_win_seat)
 
     def test_score_trick_test_trick_2_spade(self):
         """
         Test of scoring for right beats left, when right played first
         """
         self.test_trick_2.score_trick(euchre.SPADE)
-        self.assertEqual(self.test_trick_2.winning_player, self.test_trick_2_spade_expected_win_seat)
+        self.assertEqual(self.test_trick_2.winning_player_seat, self.test_trick_2_spade_expected_win_seat)
 
     def test_score_trick_test_trick_2_heart(self):
         """
         Test of scoring for low red card beating black cards
         """
         self.test_trick_2.score_trick(euchre.HEART)
-        self.assertEqual(self.test_trick_2.winning_player, self.test_trick_2_heart_expected_win_seat)
+        self.assertEqual(self.test_trick_2.winning_player_seat, self.test_trick_2_heart_expected_win_seat)
 
     def test_score_trick_test_trick_2_diamond(self):
         """
         Test of scoring: no trump played, lead wins
         """
         self.test_trick_2.score_trick(euchre.DIAMOND)
-        self.assertEqual(self.test_trick_2.winning_player, self.test_trick_2_diamond_expected_win_seat)
+        self.assertEqual(self.test_trick_2.winning_player_seat, self.test_trick_2_diamond_expected_win_seat)
 
     def test_score_trick_test_trick_3_heart(self):
         """
         Test of scoring for lead wins when no trump played, despite being the lowest face value
         """
         self.test_trick_3.score_trick(euchre.HEART)
-        self.assertEqual(self.test_trick_3.winning_player, self.test_trick_3_heart_expected_win_seat)
+        self.assertEqual(self.test_trick_3.winning_player_seat, self.test_trick_3_heart_expected_win_seat)
 
     def test_score_trick_test_trick_3_spade(self):
         """
         Test of scoring for left beating ace/king
         """
         self.test_trick_3.score_trick(euchre.SPADE)
-        self.assertEqual(self.test_trick_3.winning_player, self.test_trick_3_spade_expected_win_seat)
+        self.assertEqual(self.test_trick_3.winning_player_seat, self.test_trick_3_spade_expected_win_seat)
