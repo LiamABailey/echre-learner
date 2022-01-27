@@ -178,7 +178,9 @@ class Table:
         """
         active_trick = Trick()
         # establish who plays first
-        first_player = self.dealer
+        # if on the first trick of the hand, player after the dealer
+        # leads
+        first_player = (self.dealer + 1) % NUM_PLAYERS
         if len(active_hand.tricks) > 0:
             first_player = active_hand.tricks[-1].winning_player_seat
         # each player plays their cards

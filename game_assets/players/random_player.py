@@ -12,6 +12,22 @@ class RandomPlayer(Player):
     Euchre player that chooses cards randomly
     """
 
+    def __init__(self, id: int, action_prob = 0.25):
+        """
+        Parameters
+        ----------
+            id : int
+                The player's ID
+
+            action_prob : float 0 < x < 1
+                The probability of taking an kitty selection or trump
+                picking action when offered
+        """
+        self.player_id = id
+        self.seat = None
+        self.cards_held = []
+        self.action_prob = action_prob
+
     def exchange_with_kitty(self, kitty_card: Card) -> Card:
         """
         Method controlling dealer's adding of kitty_card to the hand,
@@ -83,7 +99,7 @@ class RandomPlayer(Player):
             bool : True if the card is to be picked up, false otherwise
         """
         # 25% chance of calling pick up
-        if random() < 0.25:
+        if random() < self.action_prob:
             return True
         return False
 
@@ -106,7 +122,7 @@ class RandomPlayer(Player):
             bool : True if suit selected, false otherwise.
         """
         # if stuck, or 25% chance otherwise
-        if is_dealer or random() < 0.25:
+        if is_dealer or random() < self.action_prob:
             return choice([s for s in SUITS if s != passed_card.suit]), True
         else:
             return None, False
