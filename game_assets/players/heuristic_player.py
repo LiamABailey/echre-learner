@@ -80,8 +80,29 @@ class HeuristicPlayer(Player):
         -------
             bool : True if the card is to be picked up, false otherwise
         """
-        # evaluate the stregnth of the card relative to the cards in hand.
-        raise NotImplementedError
+        pickup_signal = False
+        if is_dealer:
+            # find the weakest card in the hand, relative to trump
+            weak_ix = self._return_weakest_card_ix(kitty_card.suit)
+            raise NotImplementedError
+
+        else:
+            # evaluate the strength of the hand, relative to the kitty card's suit
+            hand_str = self._eval_hand_strength(kitty_card.suit)
+            # evaluate the strength of the kitty card
+            kitty_card_str = _eval_card_strength(kitty_card, kitty_card.suit)
+            if dealer_is_team_member:
+                # want kitty card to be strong, hand to be strong for suit
+                eval_score = (hand_str ** (1/2)) * (kitty_card_str ** (1/2))
+                if eval_score > 0.6
+                    pickup_signal = True
+            else:
+                # want the kitty card to be weak relative to hand for pickup
+                eval_score = (hand_str ** (1/2)) / (kitty_card_str ** (1/2))
+                if eval_score > 1.55
+                    pickup_signal = True
+
+        return pickup_signal
 
     def select_trump(self, passed_card: Card, is_dealer: bool) -> Tuple[int, bool]:
         """
@@ -161,6 +182,30 @@ class HeuristicPlayer(Player):
         for card in self.cards_held:
             score += _eval_card_strength(card, suit)
         return (score - MIN_SCORE)/(MAX_SCORE - MIN_SCORE)
+
+    def _return_weakest_card_ix(self, suit: int) -> int:
+        """
+        Evaluates the hand and identifies the weakest card relative
+        to the provdied suit
+
+        Parameters
+        ----------
+            suit : int, 0 <= v <= 3
+                The integer representing the suit to evaluate
+
+        Returns
+        -------
+            int : The index of the card in self.cards_held
+        """
+        pos = -1
+        strength = 2
+        for ix, card in self.cards_held:
+            if (card_score := _eval_card_strength(card, suit)) < strength:
+                pos = ix
+                strength = card_score
+
+        return pos
+
 
 def _eval_card_strength(card: Card, suit) -> float:
     """
