@@ -79,6 +79,7 @@ class HeuristicPlayer(Player):
         -------
             bool : True if the card is to be picked up, false otherwise
         """
+        # evaluate the stregnth of the card relative to the cards in hand.
         raise NotImplementedError
 
     def select_trump(self, passed_card: Card, is_dealer: bool) -> Tuple[int, bool]:
@@ -100,4 +101,75 @@ class HeuristicPlayer(Player):
             int : The selected suit, if any (from euchre.SUITS)
             bool : True if suit selected, false otherwise.
         """
-        raise NotImplementedError
+        # if player is the dealer
+        if is_dealer:
+            # eva;iate the stremgth pf each suit in hand:
+
+
+    def _eval_hand_strength(self, suit) -> float:
+        """
+        Evaluates the strength of a hand (five cards) relative to a suit:
+        Each card is scored as follows
+            when on-suit:
+                Jack(R): 12
+                Jack(L): 11
+                Ace: 10
+                King: 8
+                Queen: 7
+                Ten: 5
+                Nine: 3
+
+            when off-suit:
+                Ace: 7
+                King: 5
+                Queem: 3
+                Jack: 2
+                Ten: 1
+                Nine: 0
+
+        This gives a minimum score of 2 (three offsuit nines + two offsuit tens),
+        and a maxmimum score of 49 (On-suit R, L, Ace, King, and either Queen or off-suit Ace).
+        Scores are normalized between 0 and 1 with respect to these boundaries.
+
+        Parameters
+        ----------
+            suit : int, 0 <= v <= 3
+                The integer representing the suit to evaluate
+
+        Returns
+        -------
+            float : The score/value of the hand, [0,1]
+        """
+        MIN_SCORE = 2
+        MAX_SCORE = 49
+        trump_scores = {
+            euchre.JACK: 12,
+            "left": 11,
+            euchre.ACE: 10,
+            euchre.KING: 8,
+            euchre.QUEEN: 7,
+            euchre.TEN: 5,
+            euchre.NINE: 3
+        }
+        nontrump_scores = {
+            euchre.ACE: 7,
+            euchre.KING: 5,
+            euchre.QUEEN: 3,
+            euchre.JACK: 2,
+            euchre.TEN: 1,
+            euchre.NINE: 0
+        }
+
+        score = 0
+        for card in self.cards_held:
+            # trump cards
+            if card.is_trump(suit):
+                # check to see if the card is the left
+                if card.face == euchre.JACK and card.suit != suit:
+                    score += trump_scores['left']
+                else:
+                    score += trump_scores[card.face]
+            else:
+                score += nontrump_scores[card.face]
+
+        return (score - MIN_SCORE)/(MAX_SCORE - MIN_SCORE)
