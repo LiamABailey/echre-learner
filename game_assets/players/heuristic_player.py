@@ -99,12 +99,24 @@ class HeuristicPlayer(Player):
 
         Returns
         -------
-            int : The selected suit, if any (from euchre.SUITS)
+            int : The selected suit, if any (from euchre.SUITS). -1 if no suit selected
             bool : True if suit selected, false otherwise.
         """
+        DECISION_THRESH = 0.55
         # if player is the dealer
-        if is_dealer:
-            # eva;iate the stremgth pf each suit in hand:
+        max_suit = -1
+        max_score = -1
+        for suit in euchre.SUITS if suit != passed_card.suit:
+            eval_score = self._eval_hand_strength(suit)
+            if eval_score > max_score:
+                max_score = eval_score
+                max_suit = eval_suit
+
+        # if the dealer, forced to pick. If not, can pass (thresholded)
+        if is_dealer or max_score > DECISION_THRESH:
+            return max_suit, True
+        else:
+            return -1, False
 
 
     def _eval_hand_strength(self, suit: int) -> float:
