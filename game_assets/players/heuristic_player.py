@@ -6,7 +6,8 @@ from .card import Card
 
 class HeuristicPlayer(Player):
     """
-    Euchre player that leverages heuristics for decision-making.
+    Euchre player that leverages heuristics for decision-making. Doesn't
+    take advantage of 'memory' (known played cards) when playing a trick
     """
 
     def exchange_with_kitty(self, kitty_card: Card) -> None:
@@ -23,7 +24,9 @@ class HeuristicPlayer(Player):
         -------
             None
         """
-        raise NotImplementedError
+        weak_ix = self._return_weakest_card_ix(kitty_card.suit)
+        weak_card = self.cards_held.pop(weax_ix)
+        self.cards_held.append(kitty_card)
 
     def play_card(self, active_hand: Hand, active_trick: Trick, dealer_seat: int, lead_seat: int) -> Card:
         """
@@ -200,7 +203,6 @@ class HeuristicPlayer(Player):
             if (card_score := _eval_card_strength(card, suit)) < strength:
                 pos = ix
                 strength = card_score
-
         return pos
 
     def _select_kitty_pickup_dealer(self, kitty_card):
@@ -237,6 +239,7 @@ class HeuristicPlayer(Player):
         if new_hand_score > 0.6 and new_hand_score > strongest_score:
             return True
         return False
+
 
 def _eval_card_strength(card: Card, suit) -> float:
     """
