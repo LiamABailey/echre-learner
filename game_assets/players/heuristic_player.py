@@ -82,10 +82,7 @@ class HeuristicPlayer(Player):
         """
         pickup_signal = False
         if is_dealer:
-            # find the weakest card in the hand, relative to trump
-            weak_ix = self._return_weakest_card_ix(kitty_card.suit)
-            raise NotImplementedError
-
+            pickup_signal = _select_kitty_pickup_dealer(kitty_card)
         else:
             # evaluate the strength of the hand, relative to the kitty card's suit
             hand_str = self._eval_hand_strength(kitty_card.suit)
@@ -206,6 +203,40 @@ class HeuristicPlayer(Player):
 
         return pos
 
+    def _select_kitty_pickup_dealer(self, kitty_card):
+        """
+        Kitty pickup decision for the dealer
+
+        Parameters
+        ----------
+            kitty_card : card.Card
+                The face-up card in the kitty
+
+        Returns
+        -------
+            bool : True if the card is to be picked up, false otherwise
+
+        """
+        # find the weakest card in the hand, relative to trump
+        weak_ix = self._return_weakest_card_ix(kitty_card.suit)
+        # evaluate current hand strength for all other suits
+        strongest_suit = -1
+        strongest_score = -1
+        for suit in euchre.SUITS:
+            if suit != kitty_card.suit:
+                if (candidate_score := self._eval_hand_strength(suit)) > strongest_score:
+                    strongest_suit = suit
+                    strongest_score = candidate_score
+        # pop the weakest card & evaluate
+        weak_card = self.cards_held.pop(weax_ix)
+        self.cards_held.append(kitty_card)
+        new_hand_score = self._eval_hand_strength(kitty_card.suit)
+        # post-eval, return the card to hand
+        self.cards_held.pop()
+        self.cards_held.append(weak_card)
+        if new_hand_score > 0.6 and new_hand_score > strongest_score:
+            return True
+        return False
 
 def _eval_card_strength(card: Card, suit) -> float:
     """
