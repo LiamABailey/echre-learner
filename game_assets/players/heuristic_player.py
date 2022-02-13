@@ -89,7 +89,6 @@ class HeuristicPlayer(Player):
                 if strength > selected_card_str:
                     played_card_ix = ix
                     selected_card_strength = str
-
         # else, if cards have been played, find a winning card that doesn't
         # renege
         else:
@@ -107,9 +106,6 @@ class HeuristicPlayer(Player):
             # if unable to renege (no cards forced)
             if len(non_renege_ix) == 0:
                 non_renege_ix = list(range(len(self.cards_held)))
-            # temporarily replace cards
-            #reserved_hand = deepcopy(self.cards_held)
-            #self.cards_held = self.cards_held[non_regege_ix]
             # play the best card in the scenrio:
             if play_to_win:
                 lowest_winning_value = 2
@@ -122,12 +118,10 @@ class HeuristicPlayer(Player):
                                 lowest_winning_value = card_strength
             # if no  card has beeen picked: either there wasn't
             # a winning card to select above, or we don't want to win
+            # Note that in some instances, the weakest card may still be 
+            # stronger than the strongest played card.
             if played_card_ix == -1:
-                # temporarily repalce held cards to eval
-                actual_cards = deepcopy(self.cards_held)
-                self.cards_held = self.cards_held[non_renege_ix]
-                played_card_ix = self._weakest_card_ix(active_trick.trump)
-                self.cards_held = actual_cards
+                played_card_ix = self._weakest_card_ix(active_trick.trump, non_renege_ix)
 
         return self.cards_held.pop(played_card_ix)
 
@@ -252,7 +246,7 @@ class HeuristicPlayer(Player):
             score += _eval_card_strength(card, suit)
         return (score - MIN_SCORE)/(MAX_SCORE - MIN_SCORE)
 
-    def _weakest_card_ix(self, suit: int) -> int:
+    def _weakest_card_ix(self, suit: int, elig: List[int] = []) -> int:
         """
         Evaluates the hand and identifies the weakest card relative
         to the provdied suit
@@ -262,16 +256,22 @@ class HeuristicPlayer(Player):
             suit : int, 0 <= v <= 3
                 The integer representing the suit to evaluate
 
+            elig : List[int], default = []
+                The list of positions eligible for eval. If empty, evaluate all
+
         Returns
         -------
             int : The index of the card in self.cards_held
         """
+        if len(elig) == []:
+            elig = list(range(len(self.cards_held)))
         pos = -1
         strength = 2
         for ix, card in self.cards_held:
-            if (card_score := _eval_card_strength(card, suit)) < strength:
-                pos = ix
-                strength = card_score
+            if ix in elig:
+                if (card_score := _eval_card_strength(card, suit)) < strength:
+                    pos = ix
+                    strength = card_score
         return pos
 
     def _select_kitty_pickup_dealer(self, kitty_card):
