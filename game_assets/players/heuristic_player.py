@@ -1,4 +1,5 @@
-from typing import Tuple
+from copy import deepcopy
+from typing import List, Tuple
 
 from .player import Player
 from .card import Card
@@ -24,9 +25,28 @@ class HeuristicPlayer(Player):
         -------
             None
         """
-        weak_ix = self._return_weakest_card_ix(kitty_card.suit)
+        weak_ix = self._weakest_card_ix(kitty_card.suit)
         weak_card = self.cards_held.pop(weax_ix)
         self.cards_held.append(kitty_card)
+
+    def cards_in_suit(self, suit: int, is_trump: bool = False) -> List[int]:
+        """
+        Returns the indices of cards in hand in the suit
+
+        Parameters
+        ----------
+            suit : int
+                The integer of the suit, from euchre.SUITS
+            is_trump : int
+                If the suit under evaluation is trump
+        """
+        ix_in_suit = []
+        for ix, card in enumerate(self.cards_held):
+            # if the card is a member of the suit
+            if (card.suit == suit) or\
+                    (is_trump and card._is_left_bar(suit)):
+                ix_in_suit.append(ix)
+        return ix_in_suit
 
     def play_card(self, active_hand: Hand, active_trick: Trick, dealer_seat: int, lead_seat: int) -> Card:
         """
@@ -60,7 +80,56 @@ class HeuristicPlayer(Player):
             Card.card : The card played by the player (popped from 'cards_held')
 
         """
-        raise NotImplementedError
+        selected_card_strength = -1
+        played_card_ix = -1
+        #if no cards have been played yet, play strongest card
+        if len(active_trick.played_cards == 0):
+            for ix, card in enumerate(self.cards_held):
+                strength = _eval_card_strength(card, active_hand.trump)
+                if strength > selected_card_str:
+                    played_card_ix = ix
+                    selected_card_strength = str
+
+        # else, if cards have been played, find a winning card that doesn't
+        # renege
+        else:
+            best_ix = 0
+            for candidate_ix, card in enumerate(active_trick.played_cards[1:]):
+                if active_trick.played_cards[best_ix].lt_card(card, active_hand.trump, active_trick.leading_suit):
+                    best_ix = candidate_ix + 1
+            # is a team member winning ? if so, play worst card
+            best_card = active_trick.played_cards[best_ix]
+            play_to_win = True
+            if len(active_trick.played_cards) - best_ix == 2:
+                play_to_win = False
+            # get all cards legal for play
+            non_renege_ix = self.cards_in_suit(active_trick.leading_suit, active_trick.leading_suit == active_trick.trump)
+            # if unable to renege (no cards forced)
+            if len(non_renege_ix) == 0:
+                non_renege_ix = list(range(len(self.cards_held)))
+            # temporarily replace cards
+            #reserved_hand = deepcopy(self.cards_held)
+            #self.cards_held = self.cards_held[non_regege_ix]
+            # play the best card in the scenrio:
+            if play_to_win:
+                lowest_winning_value = 2
+                for ix, card in enumerate(self.cards_held):
+                    if ix in non_renege_ix:
+                        if best_card.lt_card(card, active_trick.trump, active_trick.leading_suit)
+                            card_strength = _eval_card_strength(card, active_trick.trump)
+                            if card_strength < lowest_winning_value:
+                                played_card_ix = ix
+                                lowest_winning_value = card_strength
+            # if no  card has beeen picked: either there wasn't
+            # a winning card to select above, or we don't want to win
+            if played_card_ix == -1:
+                # temporarily repalce held cards to eval
+                actual_cards = deepcopy(self.cards_held)
+                self.cards_held = self.cards_held[non_renege_ix]
+                played_card_ix = self._weakest_card_ix(active_trick.trump)
+                self.cards_held = actual_cards
+
+        return self.cards_held.pop(played_card_ix)
 
     def select_kitty_pickup(self, kitty_card : Card, is_dealer: bool,
                             dealer_is_team_member: bool) -> bool:
@@ -183,7 +252,7 @@ class HeuristicPlayer(Player):
             score += _eval_card_strength(card, suit)
         return (score - MIN_SCORE)/(MAX_SCORE - MIN_SCORE)
 
-    def _return_weakest_card_ix(self, suit: int) -> int:
+    def _weakest_card_ix(self, suit: int) -> int:
         """
         Evaluates the hand and identifies the weakest card relative
         to the provdied suit
@@ -220,7 +289,7 @@ class HeuristicPlayer(Player):
 
         """
         # find the weakest card in the hand, relative to trump
-        weak_ix = self._return_weakest_card_ix(kitty_card.suit)
+        weak_ix = self._weakest_card_ix(kitty_card.suit)
         # evaluate current hand strength for all other suits
         strongest_suit = -1
         strongest_score = -1
@@ -241,7 +310,7 @@ class HeuristicPlayer(Player):
         return False
 
 
-def _eval_card_strength(card: Card, suit) -> float:
+def _eval_card_strength(card: Card, suit: int) -> float:
     """
     Evaluates the strength of a card, given the suit
 
