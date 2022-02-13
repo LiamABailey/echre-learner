@@ -80,30 +80,29 @@ class HeuristicPlayer(Player):
             Card.card : The card played by the player (popped from 'cards_held')
 
         """
-        selected_card_strength = -1
         played_card_ix = -1
         #if no cards have been played yet, play strongest card
         if len(active_trick.played_cards == 0):
+            selected_card_strength = -1
             for ix, card in enumerate(self.cards_held):
                 strength = _eval_card_strength(card, active_hand.trump)
-                if strength > selected_card_str:
+                if strength > selected_card_strength:
                     played_card_ix = ix
                     selected_card_strength = str
         # else, if cards have been played, find a winning card that doesn't
         # renege
         else:
+            # identify the current winning card
             best_ix = 0
             for candidate_ix, card in enumerate(active_trick.played_cards[1:]):
                 if active_trick.played_cards[best_ix].lt_card(card, active_hand.trump, active_trick.leading_suit):
                     best_ix = candidate_ix + 1
             # is a team member winning ? if so, play worst card
             best_card = active_trick.played_cards[best_ix]
-            play_to_win = True
-            if len(active_trick.played_cards) - best_ix == 2:
-                play_to_win = False
+            play_to_win = len(active_trick.played_cards) - best_ix != 2
             # get all cards legal for play
             non_renege_ix = self.cards_in_suit(active_trick.leading_suit, active_trick.leading_suit == active_trick.trump)
-            # if unable to renege (no cards forced)
+            # if unable to renege (no cards forced/all eligible)
             if len(non_renege_ix) == 0:
                 non_renege_ix = list(range(len(self.cards_held)))
             # play the best card in the scenrio:
@@ -118,8 +117,6 @@ class HeuristicPlayer(Player):
                                 lowest_winning_value = card_strength
             # if no  card has beeen picked: either there wasn't
             # a winning card to select above, or we don't want to win
-            # Note that in some instances, the weakest card may still be 
-            # stronger than the strongest played card.
             if played_card_ix == -1:
                 played_card_ix = self._weakest_card_ix(active_trick.trump, non_renege_ix)
 
@@ -201,7 +198,6 @@ class HeuristicPlayer(Player):
             return max_suit, True
         else:
             return -1, False
-
 
     def _eval_hand_strength(self, suit: int) -> float:
         """
