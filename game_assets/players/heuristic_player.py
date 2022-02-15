@@ -2,7 +2,10 @@ from copy import deepcopy
 from typing import List, Tuple
 
 from .player import Player
-from .card import Card
+from ..card import Card
+from ..euchre import SUITS, NINE, TEN, JACK, QUEEN, KING, ACE
+from ..hand import Hand
+from ..trick import Trick
 
 
 class HeuristicPlayer(Player):
@@ -110,7 +113,7 @@ class HeuristicPlayer(Player):
                 lowest_winning_value = 2
                 for ix, card in enumerate(self.cards_held):
                     if ix in non_renege_ix:
-                        if best_card.lt_card(card, active_trick.trump, active_trick.leading_suit)
+                        if best_card.lt_card(card, active_trick.trump, active_trick.leading_suit):
                             card_strength = _eval_card_strength(card, active_trick.trump)
                             if card_strength < lowest_winning_value:
                                 played_card_ix = ix
@@ -154,12 +157,12 @@ class HeuristicPlayer(Player):
             if dealer_is_team_member:
                 # want kitty card to be strong, hand to be strong for suit
                 eval_score = (hand_str ** (1/2)) * (kitty_card_str ** (1/2))
-                if eval_score > 0.6
+                if eval_score > 0.6:
                     pickup_signal = True
             else:
                 # want the kitty card to be weak relative to hand for pickup
                 eval_score = (hand_str ** (1/2)) / (kitty_card_str ** (1/2))
-                if eval_score > 1.55
+                if eval_score > 1.55:
                     pickup_signal = True
 
         return pickup_signal
@@ -187,11 +190,12 @@ class HeuristicPlayer(Player):
         # if player is the dealer
         max_suit = -1
         max_score = -1
-        for suit in euchre.SUITS if suit != passed_card.suit:
-            eval_score = self._eval_hand_strength(suit)
-            if eval_score > max_score:
-                max_score = eval_score
-                max_suit = eval_suit
+        for suit in SUITS:
+            if suit != passed_card.suit:
+                eval_score = self._eval_hand_strength(suit)
+                if eval_score > max_score:
+                    max_score = eval_score
+                    max_suit = eval_suit
 
         # if the dealer, forced to pick. If not, can pass (thresholded)
         if is_dealer or max_score > DECISION_THRESH:
@@ -289,7 +293,7 @@ class HeuristicPlayer(Player):
         # evaluate current hand strength for all other suits
         strongest_suit = -1
         strongest_score = -1
-        for suit in euchre.SUITS:
+        for suit in SUITS:
             if suit != kitty_card.suit:
                 if (candidate_score := self._eval_hand_strength(suit)) > strongest_score:
                     strongest_suit = suit
@@ -343,21 +347,21 @@ def _eval_card_strength(card: Card, suit: int) -> float:
     """
     MAX_SCORE = 12
     trump_scores = {
-        euchre.JACK: 12,
+        JACK: 12,
         "left": 11,
-        euchre.ACE: 10,
-        euchre.KING: 8,
-        euchre.QUEEN: 7,
-        euchre.TEN: 5,
-        euchre.NINE: 3
+        ACE: 10,
+        KING: 8,
+        QUEEN: 7,
+        TEN: 5,
+        NINE: 3
     }
     nontrump_scores = {
-        euchre.ACE: 7,
-        euchre.KING: 5,
-        euchre.QUEEN: 3,
-        euchre.JACK: 2,
-        euchre.TEN: 1,
-        euchre.NINE: 0
+        ACE: 7,
+        KING: 5,
+        QUEEN: 3,
+        JACK: 2,
+        TEN: 1,
+        NINE: 0
     }
     if card.is_trump(suit):
         # check to see if the card is the left
