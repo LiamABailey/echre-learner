@@ -226,7 +226,7 @@ class HeuristicPlayer(Player):
                     max_suit = suit
 
         # if the dealer, forced to pick. If not, can pass (thresholded)
-        if is_dealer or max_score > self.trump_call_thresh:
+        if is_dealer or (max_score > self.trump_call_thresh):
             return max_suit, True
         else:
             return -1, False
@@ -391,8 +391,6 @@ def _eval_card_strength(card: Card, suit: int) -> float:
         TEN: 1,
         NINE: 0
     }
-    if suit == -1:
-        print("UH OH")
     if card.is_trump(suit):
         # check to see if the card is the left
         if card.face == JACK and card.suit != suit:

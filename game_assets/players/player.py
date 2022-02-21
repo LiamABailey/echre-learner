@@ -1,4 +1,4 @@
-sfrom abc import ABC, abstractmethod
+from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 from ..card import Card

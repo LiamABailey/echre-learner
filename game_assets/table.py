@@ -71,7 +71,7 @@ class Table:
         # deal out cards
         kitty_face_up = self._deal()
         pick_vals = self._pick_trump(kitty_face_up)
-        round_hand = Hand(pick_vals["trump"], pick_vals["bidder"],
+        round_hand = Hand(pick_vals["bidder"],pick_vals["trump"],
                             kitty_face_up, pick_vals["pick_up"])
         for _ in range(NUM_TRICKS):
             # play the trick
@@ -153,14 +153,13 @@ class Table:
             for player in player_order:
                 # first and third
                 if player == self.dealer:
-                    suit, _ = self.players[player].select_trump(kitty_card, True)
+                    suit, selected = self.players[player].select_trump(kitty_card, True)
                 else:
                     suit, selected = self.players[player].select_trump(kitty_card, False)
                 if selected:
                     trump_suit = suit
                     selector = player
                     break
-
         return {"trump": trump_suit, "bidder": selector, "pick_up": pick_up}
 
     def _play_trick(self, active_hand: Hand) -> Trick:
