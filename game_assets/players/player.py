@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+sfrom abc import ABC, abstractmethod
 from typing import List, Tuple
 
 from ..card import Card
@@ -11,7 +11,7 @@ class Player(ABC):
     """
     The basic player definition
     """
-
+    @abstractmethod
     def __init__(self, id: int):
         """
         Parameters
@@ -19,9 +19,7 @@ class Player(ABC):
             id : int
                 The player's ID
         """
-        self.player_id = id
-        self.seat = None
-        self.cards_held = []
+        raise NotImplementedError
 
     def assign_seat(self, seat_ix: int):
         """

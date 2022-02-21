@@ -14,6 +14,35 @@ class HeuristicPlayer(Player):
     take advantage of 'memory' (known played cards) when playing a trick
     """
 
+    def __init__(self, id: int, pickup_act = 2/3, trump_call_act = 0.55):
+        """
+        Parameters
+        ----------
+            id : int
+                The player's ID
+
+            pickup_thresh : float, default = 2/3
+                Controls the aggressiveness with which the player decides
+                to call 'pick up' during the face-up round of trump selection.
+                Closer to 0 - less likely to call pick up, closer to 1 -more likely.
+                Must be in range [0,1]
+
+            trump_call_act : float, default = 0.55
+                Controls the player's decision to pick a trump suit during the
+                free selection round. 1 is most aggresive, 0 is least.
+                Must be in range [0,1]
+
+        """
+        self.player_id = id
+        self.seat = None
+        self.cards_held = []
+        if pickup_act > 1 or pickup_act < 0:
+            raise ValueError(f"pickup_act must be in [0,1], received {pickup_act}")
+        self.pickup_thresh = pickup_act
+        if trump_call_act > 1 or trump_call_act < 0:
+            raise ValueError(f"trump_call_act must be in [0,1], received {trump_call_act}")
+        self.trump_call_thresh = trump_call_act
+
     def exchange_with_kitty(self, kitty_card: Card) -> None:
         """
         Method controlling dealer's adding of kitty_card to the hand,
@@ -157,12 +186,12 @@ class HeuristicPlayer(Player):
             if dealer_is_team_member:
                 # want kitty card to be strong, hand to be strong for suit
                 eval_score = (hand_str ** (1/2)) * (kitty_card_str ** (1/2))
-                if eval_score > 0.6:
+                if eval_score > self.pickup_thresh:
                     pickup_signal = True
             else:
                 # want the kitty card to be weak relative to hand for pickup
                 eval_score = (hand_str ** (1/2)) / (kitty_card_str ** (1/2))
-                if eval_score > 1.55:
+                if 1 - self.pickup_thresh > eval_score :
                     pickup_signal = True
 
         return pickup_signal
@@ -186,7 +215,6 @@ class HeuristicPlayer(Player):
             int : The selected suit, if any (from euchre.SUITS). -1 if no suit selected
             bool : True if suit selected, false otherwise.
         """
-        DECISION_THRESH = 0.55
         # if player is the dealer
         max_suit = -1
         max_score = -1
@@ -198,7 +226,7 @@ class HeuristicPlayer(Player):
                     max_suit = suit
 
         # if the dealer, forced to pick. If not, can pass (thresholded)
-        if is_dealer or max_score > DECISION_THRESH:
+        if is_dealer or max_score > self.trump_call_thresh:
             return max_suit, True
         else:
             return -1, False
