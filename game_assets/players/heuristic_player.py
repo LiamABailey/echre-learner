@@ -14,14 +14,14 @@ class HeuristicPlayer(Player):
     take advantage of 'memory' (known played cards) when playing a trick
     """
 
-    def __init__(self, id: int, pickup_act = 2/3, trump_call_act = 0.55):
+    def __init__(self, id: int, pickup_act = 1/3, trump_call_act = 0.55):
         """
         Parameters
         ----------
             id : int
                 The player's ID
 
-            pickup_thresh : float, default = 2/3
+            pickup_thresh : float, default = 1/3
                 Controls the aggressiveness with which the player decides
                 to call 'pick up' during the face-up round of trump selection.
                 Closer to 0 - less likely to call pick up, closer to 1 -more likely.
@@ -186,12 +186,12 @@ class HeuristicPlayer(Player):
             if dealer_is_team_member:
                 # want kitty card to be strong, hand to be strong for suit
                 eval_score = (hand_str ** (1/2)) * (kitty_card_str ** (1/2))
-                if eval_score > self.pickup_thresh:
+                if eval_score > 1 - self.pickup_thresh:
                     pickup_signal = True
             else:
                 # want the kitty card to be weak relative to hand for pickup
                 eval_score = (hand_str ** (1/2)) / (kitty_card_str ** (1/2))
-                if 1 - self.pickup_thresh > eval_score :
+                if  eval_score > (3/(4*self.pickup_thresh +0.0001)) - (3/4):
                     pickup_signal = True
 
         return pickup_signal
@@ -226,7 +226,7 @@ class HeuristicPlayer(Player):
                     max_suit = suit
 
         # if the dealer, forced to pick. If not, can pass (thresholded)
-        if is_dealer or (max_score > self.trump_call_thresh):
+        if is_dealer or (max_score > 1 - self.trump_call_thresh):
             return max_suit, True
         else:
             return -1, False
