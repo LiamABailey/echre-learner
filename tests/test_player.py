@@ -15,6 +15,8 @@ class ConcretePlayer(Player):
     Because an ABC can't be directly implemented, we implement
     a player conforming to the ABC to test the non-abstract methods.
     """
+    def __init__(self, seat: int):
+        pass
 
     def exchange_with_kitty(self, kitty_card: Card) -> None:
         pass
