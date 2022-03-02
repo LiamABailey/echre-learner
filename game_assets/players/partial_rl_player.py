@@ -85,10 +85,10 @@ class RLTrickPlayer(HeuristicPlayer):
 
         Parameters
         ----------
-            active_hand : Hand.hand
+            active_hand : hand.Hand
                 The hand currently being played
 
-            active_trick : Trick.trick
+            active_trick : trick.Trick
                 The trick currently being played
 
             dealer_seat : int
@@ -99,10 +99,15 @@ class RLTrickPlayer(HeuristicPlayer):
 
         Returns
         -------
-            Card.card : The card played by the player (popped from 'cards_held')
+            card.Card : The card played by the player (popped from 'cards_held')
 
         """
         played_card_ix = self.trick_play_model.pred_card(self.cards_held, active_hand, active_trick)
-        return self.cards_held.pop(played_card_ix)
+        if self.training:
+            # store the event to the memory buffer
+            self.trick_play_model.add_to_buffer(self.cards_held, active_hand,
+                                            active_trick, self.cards_held[played_card_ix])
+            # perform a gradient fit step
+            self.trick_play_model.step_fit()
 
-    # TODO: implement method to support the learning process
+        return self.cards_held.pop(played_card_ix)

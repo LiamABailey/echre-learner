@@ -83,7 +83,7 @@ class Player(ABC):
 
         Parameters
         ----------
-            active_hand : Hand.hand
+            active_hand : hand.Hand
                 The hand currently being played
 
             active_trick : Trick.trick

@@ -95,10 +95,10 @@ class HeuristicPlayer(Player):
 
         Parameters
         ----------
-            active_hand : Hand.hand
+            active_hand : hand.Hand
                 The hand currently being played
 
-            active_trick : Trick.trick
+            active_trick : trick.Trick
                 The trick currently being played
 
             dealer_seat : int
@@ -109,7 +109,7 @@ class HeuristicPlayer(Player):
 
         Returns
         -------
-            Card.card : The card played by the player (popped from 'cards_held')
+            card.Card : The card played by the player (popped from 'cards_held')
 
         """
         played_card_ix = -1
