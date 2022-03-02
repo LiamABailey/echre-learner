@@ -68,10 +68,10 @@ class TrickModel(ABC):
                 player_hand : List[Card]
                     The cards currently held by the player
 
-                active_hand : Hand.hand
+                active_hand : hand.Hand
                     The hand currently being played
 
-                active_trick : Trick.trick
+                active_trick : trick.Trick
                     The trick currently being played
 
                 dealer_seat : int
@@ -86,8 +86,35 @@ class TrickModel(ABC):
             """
             raise NotImplementedError
 
-    def fit(self, **kwargs) -> None:
+    def step_fit(self, **kwargs) -> None:
         """
         Perform a single fit step
+        """
+        raise NotImplementedError
+
+    def add_to_buffer(self, player_hand: List[Card], active_hand: Hand,
+                active_trick: Trick, played_card: Card) -> None:
+        """
+        Indirectly add the state/action/reward/next state to the memory buffer
+        by providing the player's cards in hand (~s), information about the round
+        (Hand), (~s), the card played (~a, s'), and the trick (~r).
+
+        Parameters
+        ----------
+            player_hand : List[Card]
+                The cards currently held by the player
+
+            active_hand : hand.Hand
+                The hand currently being played
+
+            active_trick : trick.Trick
+                The trick currently being played
+
+            played_card : card.Card
+                The card selected by the agent
+
+        Returns
+        -------
+            None
         """
         raise NotImplementedError

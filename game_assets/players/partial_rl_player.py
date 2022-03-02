@@ -33,6 +33,7 @@ class RLTrickPlayer(HeuristicPlayer):
         self.player_id = id
         self.seat = None
         self.cards_held = []
+        self.learning = False
         if pickup_act > 1 or pickup_act < 0:
             raise ValueError(f"pickup_act must be in [0,1], received {pickup_act}")
         self.pickup_thresh = pickup_act
@@ -40,6 +41,34 @@ class RLTrickPlayer(HeuristicPlayer):
             raise ValueError(f"trump_call_act must be in [0,1], received {trump_call_act}")
         self.trump_call_thresh = trump_call_act
         self.trick_play_model = trick_play_model
+
+    def enable_learning(self):
+        """
+        Toggles model training 'on'
+
+        Parameters
+        ----------
+            None
+
+        Returns
+        -------
+            None
+        """
+        self.learning = True
+
+    def disable_learning(self):
+        """
+        Toggles model training 'off'
+
+        Parameters
+        ----------
+            None
+
+        Returns
+        -------
+            None
+        """
+        self.learning = False
 
     def play_card(self, active_hand: Hand, active_trick: Trick, dealer_seat: int, lead_seat: int) -> Card:
         """
