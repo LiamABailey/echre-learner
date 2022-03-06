@@ -1,3 +1,5 @@
+from numpy import array
+
 from heuristic_player import HeuristicPlayer
 from ..models.trick_model import TrickModel
 
@@ -111,3 +113,28 @@ class RLTrickPlayer(HeuristicPlayer):
             self.trick_play_model.step_fit()
 
         return self.cards_held.pop(played_card_ix)
+
+    def _get_state_repr(self, active_hand: Hand, active_trick: Trick) -> array:
+        """
+        Given information about the cards held by the player, the active
+        hand, and the active trick, return a representation of the state.
+
+        Parameters
+        ----------
+            active_hand : hand.Hand
+                The hand currently being played
+
+            active_trick : trick.Trick
+                The trick currently being played
+
+        Return
+        ------
+            np.array : the n x 1 representation of the state
+        """
+        # can use tricks & efficient representations to limit seach space:
+        # -- use card value representations similar to those used
+        #       for the heuristic player. We need to retain rules on
+        #       'trump wins' and 'leading suit beats everything but trump'
+        # -- allow player's order in the trick to be encoded indirectly via
+        #   information on prior cards played.
+        raise NotImplementedError
