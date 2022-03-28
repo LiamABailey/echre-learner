@@ -1,6 +1,6 @@
 from numpy import array
 
-from heuristic_player import HeuristicPlayer
+from .heuristic_player import HeuristicPlayer
 from ..models.trick_model import TrickModel
 from ..card import Card
 from ..hand import Hand
@@ -13,13 +13,17 @@ class RLTrickPlayer(HeuristicPlayer):
     can leverage *arbitrary models to perform trick playing.
     """
 
-    def __init__(self, id: int, pickup_act = 1/3, trump_call_act = 0.55,
-                trick_play_model: TrickModel):
+    def __init__(self, id: int, trick_play_model: TrickModel,
+                pickup_act = 1/3, trump_call_act = 0.55,):
         """
         Parameters
         ----------
             id : int
                 The player's ID
+
+            trick_play_model : TrickModel
+                An instance of a class conforming to `TrickModel` that supports
+                card selection & learning over time
 
             pickup_thresh : float, default = 1/3
                 Controls the aggressiveness with which the player decides
@@ -32,9 +36,6 @@ class RLTrickPlayer(HeuristicPlayer):
                 free selection round. 1 is most aggresive, 0 is least.
                 Must be in range [0,1]
 
-            trick_play_model : TrickModel
-                An instance of a class conforming to `TrickModel` that supports
-                card selection & learning over time
         """
         self.player_id = id
         self.seat = None
@@ -155,7 +156,7 @@ class RLTrickPlayer(HeuristicPlayer):
     @staticmethod
     def _get_card_repr_ix(c: Card, trump_suit: int):
         """
-        Returns the index of the card in the 0-25 space.
+        Returns the index of the card in the 0-24 space.
 
         For consistentcy, the non-trump suits are ordered based
         on the numerical order assigned in euchre.py.
@@ -167,6 +168,10 @@ class RLTrickPlayer(HeuristicPlayer):
 
             trump_suit : int
                 The trump suit representation from `euchre`
+        Returns
+        -------
+            int : 0-24
+                The card index/position in the defined representation.
         """
         _trump_cards = 7
         _non_trump_cards = 6
