@@ -2,6 +2,10 @@ from numpy import array
 
 from heuristic_player import HeuristicPlayer
 from ..models.trick_model import TrickModel
+from ..card import Card
+from ..hand import Hand
+from ..trick import Trick
+from ..euchre import CARD_FACES, SUITS
 
 class RLTrickPlayer(HeuristicPlayer):
     """
@@ -122,10 +126,8 @@ class RLTrickPlayer(HeuristicPlayer):
         The encoding scheme is as follows:
 
         positions 0-24:
-            Trump: 9,10,J-right,J-left,Q,K,A
-            Leading: 9,10,J,Q,K,A (superceded by trump suit)
-            other suit 1: 9,10,J,Q,K,A
-            other suit 2: 9,10,J,Q,K,A
+            Trump: CARD_FACES order,J-left
+            other suit 1,2,3: CARD_FACES
             1 if in player's hand, else 0
         positions 25,51,77,103,129
             The leading player of a trick. Clockwise from the agent:
@@ -145,7 +147,40 @@ class RLTrickPlayer(HeuristicPlayer):
 
         Return
         ------
-            np.array : the n x 1 representation of the state
+            np.array : the 155 x 1 representation of the state
         """
 
         raise NotImplementedError
+
+    @staticmethod
+    def _get_card_repr_ix(c: Card, trump_suit: int):
+        """
+        Returns the index of the card in the 0-25 space.
+
+        For consistentcy, the non-trump suits are ordered based
+        on the numerical order assigned in euchre.py.
+
+        Parameters
+        ----------
+            c: card.Card
+                The card under evaluation
+
+            trump_suit : int
+                The trump suit representation from `euchre`
+        """
+        _trump_cards = 7
+        _non_trump_cards = 6
+        # note, SUITS[:trump_suit] + SUITS[trump_suit + 1:]
+        # is more efficient, but requires SUITS = [0,1,2,3].
+        non_trump_suits = SUITS[:]
+        non_trump_suits.remove(trump_suit)
+        if c.is_trump(trump_suit):
+            if c.suit != trump_suit:
+                # left bar
+                return _trump_cards - 1
+            else:
+                return CARD_FACES.index(c.face)
+        else:
+            return _trump_cards\
+                 + (non_trump_suits.index(c.suit) * _non_trump_cards)\
+                 + CARD_FACES.index(c.face)
