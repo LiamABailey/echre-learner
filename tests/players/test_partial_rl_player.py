@@ -34,3 +34,24 @@ class TestGetCardReprIx(unittest.TestCase):
                 self.assertEqual(\
                     RLTrickPlayer._get_card_repr_ix(eval_card, trump),
                     expected_position)
+
+    def test_positions_out_of_trump(self):
+        """
+        Tests for non-trump cards
+        """
+        for trump in SUITS:
+            non_trumps = SUITS[:]
+            non_trumps.remove(trump)
+            for ntix, non_trump in enumerate(non_trumps):
+                for fix, face in enumerate(CARD_FACES):
+                    eval_card = Card(non_trump, face)
+                    if eval_card.is_trump(trump):
+                        # catch and ignore left bar
+                        continue
+                    with self.subTest(trump=SUIT_DESCRIPTOR[trump],
+                                    non_trump=SUIT_DESCRIPTOR[non_trump],
+                                    face=FACE_DESCRIPTOR[face]):
+                        expected_position = 7 + (ntix * 6) + fix
+                        self.assertEqual(\
+                            RLTrickPlayer._get_card_repr_ix(eval_card, trump),
+                            expected_position)
