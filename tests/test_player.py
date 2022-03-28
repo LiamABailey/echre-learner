@@ -12,7 +12,7 @@ import random
 
 class ConcretePlayer(Player):
     """
-    Because an ABC can't be directly implemented, we implement
+    Because an ABC can't be directly instantiated, we implement
     a player conforming to the ABC to test the non-abstract methods.
     """
     def __init__(self, seat: int):
