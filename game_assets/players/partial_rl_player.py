@@ -119,6 +119,22 @@ class RLTrickPlayer(HeuristicPlayer):
         Given information about the cards held by the player, the active
         hand, and the active trick, return a representation of the state.
 
+        The encoding scheme is as follows:
+
+        positions 0-24:
+            Trump: 9,10,J-right,J-left,Q,K,A
+            Leading: 9,10,J,Q,K,A (superceded by trump suit)
+            other suit 1: 9,10,J,Q,K,A
+            other suit 2: 9,10,J,Q,K,A
+            1 if in player's hand, else 0
+        positions 25,51,77,103,129
+            The leading player of a trick. Clockwise from the agent:
+                0,0.33,0.66,1
+        positions 26-50, 52-76, 78-102, 104-128, 130-154
+            The cards played, following the ordering scheme from positions 0-24
+            Values are based on the played order
+                (first played) 0.25, 0.5, 0.75, 1 (last played)
+
         Parameters
         ----------
             active_hand : hand.Hand
@@ -131,10 +147,5 @@ class RLTrickPlayer(HeuristicPlayer):
         ------
             np.array : the n x 1 representation of the state
         """
-        # can use tricks & efficient representations to limit seach space:
-        # -- use card value representations similar to those used
-        #       for the heuristic player. We need to retain rules on
-        #       'trump wins' and 'leading suit beats everything but trump'
-        # -- allow player's order in the trick to be encoded indirectly via
-        #   information on prior cards played.
+
         raise NotImplementedError
