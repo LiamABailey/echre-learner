@@ -1,11 +1,11 @@
-from numpy import array
+from numpy import array,zeros
 
 from .heuristic_player import HeuristicPlayer
 from ..models.trick_model import TrickModel
 from ..card import Card
 from ..hand import Hand
 from ..trick import Trick
-from ..euchre import CARD_FACES, SUITS
+from ..euchre import CARD_FACES, SUITS, NUM_PLAYERS
 
 class RLTrickPlayer(HeuristicPlayer):
     """
@@ -150,8 +150,27 @@ class RLTrickPlayer(HeuristicPlayer):
         ------
             np.array : the 155 x 1 representation of the state
         """
-
-        raise NotImplementedError
+        state = zeros((155,))
+        # assign positions to cards in hand
+        for in_hand in self.cards_held:
+            state[_get_card_repr_ix(in_hand, active_hand.trump)] = 1
+        # assign position to played cards
+        for t_ix,played_trick in enumerate(active_hand):
+            for played_card in played_trick:
+                # calculate the value based on distance from player
+                weight = ((played_card.player_seat - self.seat   -1)\
+                        % NUM_PLAYERS) / (NUM_PLAYERS - 1)
+                subgroup_pos = _get_card_repr_ix(played_card.card, active_hand.trump)
+                # the index is offset by the hand, plus previously evaluated tricks
+                state[(25 * (t_ix+1)) + subgroup_pos] = weight
+        # assign positions to the active trick
+        for played_card in active_trick:
+            weight = ((played_card.player_seat - self.seat   -1)\
+                    % NUM_PLAYERS) / (NUM_PLAYERS - 1)
+            subgroup_pos = _get_card_repr_ix(played_card.card, active_hand.trump)
+            # offset by the hand, previously evaluated tricks
+            state[(25 * (t_ix + 2)) + subgroup_pos] = weight
+        return state
 
     @staticmethod
     def _get_card_repr_ix(c: Card, trump_suit: int):
