@@ -4,6 +4,7 @@ from game_assets.card import Card
 from game_assets.euchre import (CARD_FACES, FACE_DESCRIPTOR, LEFT_SUIT,
                                 JACK, SUITS, SUIT_DESCRIPTOR)
 
+
 class TestGetCardReprIx(unittest.TestCase):
     """
     Unittests for the internal card indexing calculator.
@@ -55,3 +56,38 @@ class TestGetCardReprIx(unittest.TestCase):
                         self.assertEqual(\
                             RLTrickPlayer._get_card_repr_ix(eval_card, trump),
                             expected_position)
+
+
+class TestGetEncodedCardVal(unittest.TestCase):
+
+    def setUp(self):
+        self.agent = RLTrickPlayer(0, None)
+
+    def test_get_encoded_card_val_valid(self):
+        """
+        Tests where the input is valid
+        """
+        raise NotImplementedError
+
+    def test_get_encoded_card_val_oob(self):
+        """
+        Tests where the input is out of bounds
+        """
+        raise NotImplementedError
+
+    def test_get_encoded_card_val_mistyped(self):
+        """
+        Tests where the input is an unsupported type
+        """
+        raise NotImplementedError
+
+    def test_get_encoded_card_val_mistype_unset_seat(self):
+        """
+        Test behavior where the agent's seat hasn't been assigned
+        """
+        play_seats = [0,1,2,3]
+        for i, ps in enumerate(play_seats):
+            with self.subTest(test = i):
+                with self.assertRaises(TypeError) as ae:
+                    self.agent._get_encoded_card_val(ps)
+                self.assertTrue("unsupported operand type(s) for -: 'int' and 'NoneType'")

@@ -158,19 +158,38 @@ class RLTrickPlayer(HeuristicPlayer):
         for t_ix,played_trick in enumerate(active_hand):
             for played_card in played_trick:
                 # calculate the value based on distance from player
-                weight = ((played_card.player_seat - self.seat   -1)\
-                        % NUM_PLAYERS) / (NUM_PLAYERS - 1)
+                weight = self._get_encoded_card_val(played_card.player_seat)
                 subgroup_pos = _get_card_repr_ix(played_card.card, active_hand.trump)
                 # the index is offset by the hand, plus previously evaluated tricks
                 state[(25 * (t_ix+1)) + subgroup_pos] = weight
-        # assign positions to the active trick
+        # assign positions to the ongoing trick
         for played_card in active_trick:
-            weight = ((played_card.player_seat - self.seat   -1)\
-                    % NUM_PLAYERS) / (NUM_PLAYERS - 1)
+            weight = self._get_encoded_card_val(played_card.player_seat)
             subgroup_pos = _get_card_repr_ix(played_card.card, active_hand.trump)
             # offset by the hand, previously evaluated tricks
             state[(25 * (t_ix + 2)) + subgroup_pos] = weight
         return state
+
+    def _get_encoded_card_val(self, play_seat: int) -> float:
+        """
+        Given the seat of the played card, return the
+        0/0.33/0.66/1 encoded/'weighted' value of the card
+
+        Parameters
+        ----------
+            play_seat : int
+                The seat index of the player that played the card
+
+        Returns
+        -------
+            float : one of 0, 1/3, 2/3, 1
+        """
+        if not (0 <= play_seat < NUM_PLAYERS):
+            raise ValueError(f"Expected play_seat in [0,3], received {play_seat}")
+        if not isinstance(play_seat, int) or isinstance(play_seat, bool):
+            raise TypeError(f"Expected type(play_seat) = int, received {type(play_seat)}")
+        return ((play_seat - self.seat -1)\
+                % NUM_PLAYERS) / (NUM_PLAYERS - 1)
 
     @staticmethod
     def _get_card_repr_ix(c: Card, trump_suit: int):
