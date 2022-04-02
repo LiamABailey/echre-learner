@@ -1,4 +1,6 @@
+from dataclasses import dataclass
 import unittest
+
 from game_assets.players.partial_rl_player import RLTrickPlayer
 from game_assets.card import Card
 from game_assets.euchre import (CARD_FACES, FACE_DESCRIPTOR, LEFT_SUIT,
@@ -67,7 +69,25 @@ class TestGetEncodedCardVal(unittest.TestCase):
         """
         Tests where the input is valid
         """
-        raise NotImplementedError
+        @dataclass
+        class ValidCase:
+            agent_seat: int
+            played_seat: int
+            expected_result: float
+
+        valid_cases = [
+            ValidCase(0,0,1.),
+            ValidCase(0,1,0.),
+            ValidCase(0,3,2/3),
+            ValidCase(2,0,1/3),
+            ValidCase(1,3,1/3),
+            ValidCase(3,0,0.)
+        ]
+        for i, vc in enumerate(valid_cases):
+            with self.subTest(test = i):
+                self.agent.assign_seat(vc.agent_seat)
+                result_enc = self.agent._get_encoded_card_val(vc.played_seat)
+                self.assertAlmostEqual(result_enc, vc.expected_result, 5)
 
     def test_get_encoded_card_val_oob(self):
         """
