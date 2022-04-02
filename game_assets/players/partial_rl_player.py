@@ -184,10 +184,10 @@ class RLTrickPlayer(HeuristicPlayer):
         -------
             float : one of 0, 1/3, 2/3, 1
         """
-        if not (0 <= play_seat < NUM_PLAYERS):
-            raise ValueError(f"Expected play_seat in [0,3], received {play_seat}")
         if not isinstance(play_seat, int) or isinstance(play_seat, bool):
             raise TypeError(f"Expected type(play_seat) = int, received {type(play_seat)}")
+        if not (0 <= play_seat < NUM_PLAYERS):
+            raise ValueError(f"Expected play_seat in [0,3], received {play_seat}")
         return ((play_seat - self.seat -1)\
                 % NUM_PLAYERS) / (NUM_PLAYERS - 1)
 

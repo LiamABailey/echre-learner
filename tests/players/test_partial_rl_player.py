@@ -2,7 +2,7 @@ import unittest
 from game_assets.players.partial_rl_player import RLTrickPlayer
 from game_assets.card import Card
 from game_assets.euchre import (CARD_FACES, FACE_DESCRIPTOR, LEFT_SUIT,
-                                JACK, SUITS, SUIT_DESCRIPTOR)
+                                JACK, SUITS, SUIT_DESCRIPTOR, NUM_PLAYERS)
 
 
 class TestGetCardReprIx(unittest.TestCase):
@@ -73,13 +73,25 @@ class TestGetEncodedCardVal(unittest.TestCase):
         """
         Tests where the input is out of bounds
         """
-        raise NotImplementedError
+        oob_inputs = [-100, -1, NUM_PLAYERS, NUM_PLAYERS + 1, 100]
+        self.agent.assign_seat(0)
+        for i, ps in enumerate(oob_inputs):
+            with self.subTest(test = i):
+                with self.assertRaises(ValueError) as te:
+                    self.agent._get_encoded_card_val(ps)
+                self.assertTrue("Expected play_seat in [0,3], received " in str(te.exception))
 
     def test_get_encoded_card_val_mistyped(self):
         """
         Tests where the input is an unsupported type
         """
-        raise NotImplementedError
+        invalid_inputs = [True, False, 1.0, "1"]
+        self.agent.assign_seat(0)
+        for i, ps in enumerate(invalid_inputs):
+            with self.subTest(test = i):
+                with self.assertRaises(TypeError) as te:
+                    self.agent._get_encoded_card_val(ps)
+                self.assertTrue("Expected type(play_seat) = int, received" in str(te.exception))
 
     def test_get_encoded_card_val_mistype_unset_seat(self):
         """
@@ -88,6 +100,7 @@ class TestGetEncodedCardVal(unittest.TestCase):
         play_seats = [0,1,2,3]
         for i, ps in enumerate(play_seats):
             with self.subTest(test = i):
-                with self.assertRaises(TypeError) as ae:
+                with self.assertRaises(TypeError) as te:
                     self.agent._get_encoded_card_val(ps)
-                self.assertTrue("unsupported operand type(s) for -: 'int' and 'NoneType'")
+                self.assertTrue(("unsupported operand type(s) for "
+                    "-: 'int' and 'NoneType'") in str(te.exception))
