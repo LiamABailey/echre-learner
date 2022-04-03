@@ -138,40 +138,49 @@ class TestGetStateRepr(unittest.TestCase):
         C_9 = Card(euchre.CLUB, euchre.NINE)
         D_10 = Card(euchre.DIAMOND, euchre.TEN)
         H_10 = Card(euchre.HEART, euchre.TEN)
+        D_J = Card(euchre.DIAMOND, euchre.JACK)
+        H_J = Card(euchre.HEART, euchre.JACK)
+        S_J = Card(euchre.SPADE, euchre.JACK)
+        C_Q = Card(euchre.CLUB, euchre.QUEEN)
+        S_Q = Card(euchre.SPADE, euchre.QUEEN)
+        D_K = Card(euchre.DIAMOND, euchre.KING)
+        H_K = Card(euchre.HEART, euchre.KING)
+        C_A = Card(euchre.CLUB, euchre.ACE)
+        H_A = Card(euchre.HEART, euchre.ACE)
 
         # collections of cards for the player's hand
-        cls.full_hand_1 = []
-        cls.full_hand_2 = []
-        cls.p4_hand_1 = []
-        cls.p3_hand_1 = []
-        cls.p2_hand_1 = []
-        cls.p1_hand_1 = []
-        cls.p1_hand_2 = []
-        cls.p1_hand_3 = []
+        cls.full_hand_1 = [C_9, D_10, H_J, D_K, H_K]
+        cls.full_hand_2 = [D_J, H_J, D_10, S_Q, C_A]
+        cls.p4_hand_1 = [H_10, S_J, C_Q, H_A]
+        cls.p3_hand_1 = [D_J, C_Q, S_Q]
+        cls.p2_hand_1 = [D_K, C_9]
+        cls.p1_hand_1 = [H_10]
+        cls.p1_hand_2 = [C_A]
+        cls.p1_hand_3 = [S_J]
         # collections of completed tricks to
         # be loaded into the ongoing hand
         cls.complete_trick_1 = Trick()
-        ct1_card_players = [(),]
+        ct1_card_players = [(),(),(),()]
         for c in ct1_cards:
             cls.complete_trick_1.add_card(c[0],c[1])
         cls.complete_trick_2 = Trick()
-        ct2_card_players = [(),]
+        ct2_card_players = [(),(),(),()]
         for c in ct2_cards:
             cls.complete_trick_2.add_card(c[0],c[1])
         cls.completed_trick_3 = Trick()
-        ct3_card_players = [(),]
+        ct3_card_players = [(),(),(),()]
         for c in ct3_cards:
             cls.complete_trick_3.add_card(c[0],c[1])
         cls.completed_trick_4 = Trick()
-        ct4_card_players = [(),]
+        ct4_card_players = [(),(),(),()]
         for c in ct4_cards:
             cls.complete_trick_4.add_card(c[0],c[1])
         cls.completed_trick_5 = Trick()
-        ct5_card_players = [(),]
+        ct5_card_players = [(),(),(),()]
         for c in ct5_cards:
             cls.complete_trick_5.add_card(c[0],c[1])
         cls.completed_trick_6 = Trick()
-        ct6_card_players = [(),]
+        ct6_card_players = [(),(),(),()]
         for c in ct6_cards:
             cls.complete_trick_6.add_card(c[0],c[1])
         # collections of active tricks
@@ -179,14 +188,27 @@ class TestGetStateRepr(unittest.TestCase):
         cls.active_trick_c0_1 = Trick()
         # one card played
         cls.active_trick_c1_1 = Trick()
+        cls.active_trick_c1_1.add_card()
         cls.active_trick_c1_2 = Trick()
+        cls.active_trick_c1_2.add_card()
         cls.active_trick_c1_3 = Trick()
+        cls.active_trick_c1_3.add_card()
         # two cards played
         cls.active_trick_c2_1 = Trick()
+        cls.active_trick_c2_1.add_card()
+        cls.active_trick_c2_1.add_card()
         cls.active_trick_c2_2 = Trick()
+        cls.active_trick_c2_2.add_card()
+        cls.active_trick_c2_2.add_card()
         # three_cards_played
         cls.active_trick_c3_1 = Trick()
+        cls.active_trick_c3_1.add_card()
+        cls.active_trick_c3_1.add_card()
+        cls.active_trick_c3_1.add_card()
         cls.active_trick_c3_2 = Trick()
+        cls.active_trick_c3_2.add_card()
+        cls.active_trick_c3_2.add_card()
+        cls.active_trick_c3_2.add_card()
 
     def setUp(self):
         """
