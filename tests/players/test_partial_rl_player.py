@@ -114,7 +114,7 @@ class TestGetEncodedCardVal(unittest.TestCase):
                     self.agent._get_encoded_card_val(ps)
                 self.assertTrue("Expected type(play_seat) = int, received" in str(te.exception))
 
-    def test_get_encoded_card_val_mistype_unset_seat(self):
+    def test_get_encoded_card_val_unset_seat(self):
         """
         Test behavior where the agent's seat hasn't been assigned
         """
@@ -123,6 +123,72 @@ class TestGetEncodedCardVal(unittest.TestCase):
             with self.subTest(test = i):
                 with self.assertRaises(TypeError) as te:
                     self.agent._get_encoded_card_val(ps)
+                self.assertTrue(("unsupported operand type(s) for "
+                    "-: 'int' and 'NoneType'") in str(te.exception))
+
+
+class TestInitialPlayerEncoding(unittest.TestCase):
+
+    def setUp(self):
+        self.agent = RLTrickPlayer(0, None)
+
+    def test_initial_player_encoding_valid(self):
+        """
+        Tests where the input is valid
+        """
+        @dataclass
+        class ValidCase:
+            agent_seat: int
+            played_seat: int
+            expected_result: float
+
+        valid_cases = [
+            ValidCase(0,0,1.),
+            ValidCase(0,1,0),
+            ValidCase(0,3,2/3),
+            ValidCase(2,0,1/3),
+            ValidCase(1,3,1/3),
+            ValidCase(3,0,0)
+        ]
+        for i, vc in enumerate(valid_cases):
+            with self.subTest(test = i):
+                self.agent.assign_seat(vc.agent_seat)
+                result_enc = self.agent._get_initial_player_encoding(vc.played_seat)
+                self.assertAlmostEqual(result_enc, vc.expected_result, 5)
+
+    def test_initial_player_encoding_oob(self):
+        """
+        Tests where the input is out of bounds
+        """
+        oob_inputs = [-100, -1, euchre.NUM_PLAYERS, euchre.NUM_PLAYERS + 1, 100]
+        self.agent.assign_seat(0)
+        for i, ps in enumerate(oob_inputs):
+            with self.subTest(test = i):
+                with self.assertRaises(ValueError) as te:
+                    self.agent._get_initial_player_encoding(ps)
+                self.assertTrue("Expected play_seat in [0,3], received " in str(te.exception))
+
+    def test_initial_player_encoding_mistyped(self):
+        """
+        Tests where the input is an unsupported type
+        """
+        invalid_inputs = [True, False, 1.0, "1"]
+        self.agent.assign_seat(0)
+        for i, ps in enumerate(invalid_inputs):
+            with self.subTest(test = i):
+                with self.assertRaises(TypeError) as te:
+                    self.agent._get_initial_player_encoding(ps)
+                self.assertTrue("Expected type(play_seat) = int, received" in str(te.exception))
+
+    def test_initial_player_encoding_unset_seat(self):
+        """
+        Test behavior where the agent's seat hasn't been assigned
+        """
+        play_seats = [0,1,2,3]
+        for i, ps in enumerate(play_seats):
+            with self.subTest(test = i):
+                with self.assertRaises(TypeError) as te:
+                    self.agent._get_initial_player_encoding(ps)
                 self.assertTrue(("unsupported operand type(s) for "
                     "-: 'int' and 'NoneType'") in str(te.exception))
 

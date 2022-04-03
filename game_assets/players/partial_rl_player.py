@@ -155,19 +155,29 @@ class RLTrickPlayer(HeuristicPlayer):
         for in_hand in self.cards_held:
             state[_get_card_repr_ix(in_hand, active_hand.trump)] = 1
         # assign position to played cards
+        t_ix = 0
         for t_ix,played_trick in enumerate(active_hand):
+            # get the encoding for the starting player
+            state[(26 * (t_ix + 1)) -1] =\
+                self._get_initial_player_encoding(played_trick.played_cards[0].seat)
             for played_card in played_trick:
                 # calculate the value based on distance from player
                 weight = self._get_encoded_card_val(played_card.player_seat)
                 subgroup_pos = _get_card_repr_ix(played_card.card, active_hand.trump)
                 # the index is offset by the hand, plus previously evaluated tricks
-                state[(25 * (t_ix+1)) + subgroup_pos] = weight
+                state[(26 * (t_ix+1)) + subgroup_pos] = weight
         # assign positions to the ongoing trick
+        # if no tricks have been played and if no cards have been played:
+        if not (t_ix or active_trick.played_cards):
+                state[25] = self._get_initial_player_encoding(self.seat)
+        else:
+            state[(26 * (t_ix + 2)) -1] =\
+             self._get_initial_player_encoding(self.active_hand.played_cards[0].seat)
         for played_card in active_trick:
             weight = self._get_encoded_card_val(played_card.player_seat)
             subgroup_pos = _get_card_repr_ix(played_card.card, active_hand.trump)
             # offset by the hand, previously evaluated tricks
-            state[(25 * (t_ix + 2)) + subgroup_pos] = weight
+            state[(26 * (t_ix + 2)) + subgroup_pos] = weight
         return state
 
     def _get_encoded_card_val(self, play_seat: int) -> float:
@@ -189,6 +199,26 @@ class RLTrickPlayer(HeuristicPlayer):
         if not (0 <= play_seat < NUM_PLAYERS):
             raise ValueError(f"Expected play_seat in [0,3], received {play_seat}")
         return (((play_seat - self.seat -1)% NUM_PLAYERS) + 1) * .25
+
+    def _get_initial_player_encoding(self, play_seat: int) -> float:
+        """
+        Given the seat of the first player, return the
+        0 (left), 1/3, 2/3, 1(self)  encoding of the position
+
+        Parameters
+        ----------
+            play_seat : int
+                The seat index of the player that went first
+
+        Returns
+        -------
+            float : one of 0, 1/3, 2/3, 1, representing the position encoding
+        """
+        if not isinstance(play_seat, int) or isinstance(play_seat, bool):
+            raise TypeError(f"Expected type(play_seat) = int, received {type(play_seat)}")
+        if not (0 <= play_seat < NUM_PLAYERS):
+            raise ValueError(f"Expected play_seat in [0,3], received {play_seat}")
+        return (((play_seat - self.seat -1)% NUM_PLAYERS)) / (NUM_PLAYERS -1)
 
     @staticmethod
     def _get_card_repr_ix(c: Card, trump_suit: int):
