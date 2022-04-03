@@ -173,7 +173,7 @@ class RLTrickPlayer(HeuristicPlayer):
     def _get_encoded_card_val(self, play_seat: int) -> float:
         """
         Given the seat of the played card, return the
-        0/0.33/0.66/1 encoded/'weighted' value of the card
+        0.25, 0.5, 0.75, 1  encoded/'weighted' value of the card
 
         Parameters
         ----------
@@ -182,14 +182,13 @@ class RLTrickPlayer(HeuristicPlayer):
 
         Returns
         -------
-            float : one of 0, 1/3, 2/3, 1
+            float : one of 0.25, 0.5, 0.75, 1
         """
         if not isinstance(play_seat, int) or isinstance(play_seat, bool):
             raise TypeError(f"Expected type(play_seat) = int, received {type(play_seat)}")
         if not (0 <= play_seat < NUM_PLAYERS):
             raise ValueError(f"Expected play_seat in [0,3], received {play_seat}")
-        return ((play_seat - self.seat -1)\
-                % NUM_PLAYERS) / (NUM_PLAYERS - 1)
+        return (((play_seat - self.seat -1)% NUM_PLAYERS) + 1) * .25
 
     @staticmethod
     def _get_card_repr_ix(c: Card, trump_suit: int):
