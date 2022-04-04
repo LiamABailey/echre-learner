@@ -153,14 +153,14 @@ class RLTrickPlayer(HeuristicPlayer):
         state = zeros((155,))
         # assign positions to cards in hand
         for in_hand in self.cards_held:
-            state[_get_card_repr_ix(in_hand, active_hand.trump)] = 1
+            state[self._get_card_repr_ix(in_hand, active_hand.trump)] = 1
         # assign position to played cards
         t_ix = 0
-        for t_ix,played_trick in enumerate(active_hand):
+        for t_ix,played_trick in enumerate(active_hand.tricks):
             # get the encoding for the starting player
             state[(26 * (t_ix + 1)) -1] =\
                 self._get_initial_player_encoding(played_trick.played_cards[0].seat)
-            for played_card in played_trick:
+            for played_card in played_trick.played_cards:
                 # calculate the value based on distance from player
                 weight = self._get_encoded_card_val(played_card.player_seat)
                 subgroup_pos = _get_card_repr_ix(played_card.card, active_hand.trump)
@@ -173,7 +173,7 @@ class RLTrickPlayer(HeuristicPlayer):
         else:
             state[(26 * (t_ix + 2)) -1] =\
              self._get_initial_player_encoding(self.active_hand.played_cards[0].seat)
-        for played_card in active_trick:
+        for played_card in active_trick.played_cards:
             weight = self._get_encoded_card_val(played_card.player_seat)
             subgroup_pos = _get_card_repr_ix(played_card.card, active_hand.trump)
             # offset by the hand, previously evaluated tricks

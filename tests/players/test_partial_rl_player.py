@@ -1,5 +1,10 @@
 from dataclasses import dataclass
+import os
 import unittest
+
+
+from numpy import ndarray, loadtxt
+from numpy.testing import assert_allclose
 
 from game_assets.players.partial_rl_player import RLTrickPlayer
 from game_assets.card import Card
@@ -195,6 +200,23 @@ class TestInitialPlayerEncoding(unittest.TestCase):
 
 class TestGetStateRepr(unittest.TestCase):
 
+    @staticmethod
+    def load_state_csv(fname: str) -> ndarray:
+        """
+        Loads a 1d state representation from a provided csv
+
+        Parameters
+        ----------
+            fname : str
+                The name of the file to load
+
+        Returns
+        -------
+            ndarray: the 1d array representing the state
+        """
+        fpath = os.path.join("tests","assets","players","partial_rl_player_states",fname)
+        return loadtxt(fpath, delimiter = ',')
+
     @classmethod
     def setUpClass(cls):
         """
@@ -226,58 +248,121 @@ class TestGetStateRepr(unittest.TestCase):
         # collections of completed tricks to
         # be loaded into the ongoing hand
         cls.complete_trick_1 = Trick()
-        ct1_card_players = [(),(),(),()]
-        for c in ct1_cards:
+        ct1_card_players = [(C_9,2),(D_10,3),(H_J,0),(H_K,1)]
+        for c in ct1_card_players:
             cls.complete_trick_1.add_card(c[0],c[1])
         cls.complete_trick_2 = Trick()
-        ct2_card_players = [(),(),(),()]
-        for c in ct2_cards:
+        ct2_card_players = [(H_A,0),(C_Q,1),(D_10,2),(H_J,3)]
+        for c in ct2_card_players:
             cls.complete_trick_2.add_card(c[0],c[1])
-        cls.completed_trick_3 = Trick()
-        ct3_card_players = [(),(),(),()]
-        for c in ct3_cards:
+        cls.complete_trick_3 = Trick()
+        ct3_card_players = [(S_J,1),(C_Q,2),(S_Q,3),(C_9,0)]
+        for c in ct3_card_players:
             cls.complete_trick_3.add_card(c[0],c[1])
-        cls.completed_trick_4 = Trick()
-        ct4_card_players = [(),(),(),()]
-        for c in ct4_cards:
+        cls.complete_trick_4 = Trick()
+        ct4_card_players = [(C_A,3),(D_K,0),(C_Q,1),(S_Q,2)]
+        for c in ct4_card_players:
             cls.complete_trick_4.add_card(c[0],c[1])
-        cls.completed_trick_5 = Trick()
-        ct5_card_players = [(),(),(),()]
-        for c in ct5_cards:
+        cls.complete_trick_5 = Trick()
+        ct5_card_players = [(H_J,1),(S_J,2),(D_J,3),(S_Q,0)]
+        for c in ct5_card_players:
             cls.complete_trick_5.add_card(c[0],c[1])
-        cls.completed_trick_6 = Trick()
-        ct6_card_players = [(),(),(),()]
-        for c in ct6_cards:
+        cls.complete_trick_6 = Trick()
+        ct6_card_players = [(H_10,2),(D_10,3),(D_K,0),(C_A,1)]
+        for c in ct6_card_players:
             cls.complete_trick_6.add_card(c[0],c[1])
         # collections of active tricks
         # no cards played
         cls.active_trick_c0_1 = Trick()
         # one card played
         cls.active_trick_c1_1 = Trick()
-        cls.active_trick_c1_1.add_card()
+        cls.active_trick_c1_1.add_card(S_J,1)
         cls.active_trick_c1_2 = Trick()
-        cls.active_trick_c1_2.add_card()
+        cls.active_trick_c1_2.add_card(H_A,2)
         cls.active_trick_c1_3 = Trick()
-        cls.active_trick_c1_3.add_card()
+        cls.active_trick_c1_3.add_card(H_J,3)
         # two cards played
         cls.active_trick_c2_1 = Trick()
-        cls.active_trick_c2_1.add_card()
-        cls.active_trick_c2_1.add_card()
+        cls.active_trick_c2_1.add_card(D_10,0)
+        cls.active_trick_c2_1.add_card(D_J,1)
         cls.active_trick_c2_2 = Trick()
-        cls.active_trick_c2_2.add_card()
-        cls.active_trick_c2_2.add_card()
+        cls.active_trick_c2_2.add_card(H_K,2)
+        cls.active_trick_c2_2.add_card(H_A,3)
         # three_cards_played
         cls.active_trick_c3_1 = Trick()
-        cls.active_trick_c3_1.add_card()
-        cls.active_trick_c3_1.add_card()
-        cls.active_trick_c3_1.add_card()
+        cls.active_trick_c3_1.add_card(D_10,3)
+        cls.active_trick_c3_1.add_card(D_J,0)
+        cls.active_trick_c3_1.add_card(C_Q,1)
         cls.active_trick_c3_2 = Trick()
-        cls.active_trick_c3_2.add_card()
-        cls.active_trick_c3_2.add_card()
-        cls.active_trick_c3_2.add_card()
+        cls.active_trick_c3_2.add_card(S_Q,1)
+        cls.active_trick_c3_2.add_card(C_A,2)
+        cls.active_trick_c3_2.add_card(H_K,3)
 
-    def setUp(self):
+    def test_get_state_repr_trick1_lead(self):
         """
-        Instantiate new players for each test
+        Tests where the agent has a full hand, and no cards
+        have been played yet (agent starts)
         """
-        self.agent = RLTrickPlayer(0, None)
+        lead_cases = [
+            {
+                'agent_hand': self.full_hand_1,
+                'agent_seat': 0,
+                'trump_suit': euchre.SPADE,
+                'expected_encoding': self.load_state_csv("trick1_lead_case0.csv")
+            },
+            {
+                'agent_hand': self.full_hand_1,
+                'agent_seat': 1,
+                'trump_suit': euchre.DIAMOND,
+                'expected_encoding': self.load_state_csv("trick1_lead_case1.csv")
+            },
+            {
+                'agent_hand': self.full_hand_2,
+                'agent_seat': 2,
+                'trump_suit': euchre.HEART,
+                'expected_encoding': self.load_state_csv("trick1_lead_case2.csv")
+            },
+            {
+                'agent_hand': self.full_hand_2,
+                'agent_seat': 3,
+                'trump_suit': euchre.CLUB,
+                'expected_encoding': self.load_state_csv("trick1_lead_case3.csv")
+            },
+        ]
+        active_trick = Trick()
+        for i, lc in enumerate(lead_cases):
+            trial_agent = RLTrickPlayer(0, None)
+            trial_agent.assign_seat(lc['agent_seat'])
+            trial_agent.receive_cards(lc['agent_hand'])
+            # construct the hand
+            active_hand = Hand(0, lc['trump_suit'], None, None)
+            with self.subTest(test = i):
+                # construct state
+                result_state = trial_agent._get_state_repr(active_hand, active_trick)
+                assert_allclose(result_state, lc['expected_encoding'], atol=0.01)
+
+    def test_get_state_repr_trick1_nonlead(self):
+        """
+        Tests where the agent has a full hand, and the first trick is
+        ongoing (agent did not start)
+        """
+        raise NotImplementedError
+
+    def test_get_state_repr_multi_trick(self):
+        """
+        validate performance of state encoding as the game is underway
+        """
+        raise NotImplementedError
+
+    def test_get_state_repr_last_trick(self):
+        """
+        state encoding where the last trick is being played (only one card
+        remains in the agent's hand)
+        """
+        raise NotImplementedError
+
+    def test_get_state_repr_empty(self):
+        """
+        Base case with empty hand, active trick, and agent has no cards
+        """
+        raise NotImplementedError
