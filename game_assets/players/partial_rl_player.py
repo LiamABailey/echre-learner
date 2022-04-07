@@ -133,7 +133,7 @@ class RLTrickPlayer(HeuristicPlayer):
         positions 25,51,77,103,129
             The leading player of a trick. Clockwise from the agent:
                 0,0.33,0.66,1
-        positions 26-50, 52-76, 78-102, 104-128, 130-154
+        positions 26-50, 52-76, 78-102, 104-128,
             The cards played, following the ordering scheme from positions 0-24
             Values are based on the played order
                 (first played) 0.25, 0.5, 0.75, 1 (last played)
@@ -163,7 +163,7 @@ class RLTrickPlayer(HeuristicPlayer):
             for played_card in played_trick.played_cards:
                 # calculate the value based on distance from player
                 weight = self._get_encoded_card_val(played_card.player_seat)
-                subgroup_pos = _get_card_repr_ix(played_card.card, active_hand.trump)
+                subgroup_pos = self._get_card_repr_ix(played_card.card, active_hand.trump)
                 # the index is offset by the hand, plus previously evaluated tricks
                 state[(26 * (t_ix+1)) + subgroup_pos] = weight
         # assign positions to the ongoing trick
@@ -171,13 +171,13 @@ class RLTrickPlayer(HeuristicPlayer):
         if not (t_ix or active_trick.played_cards):
                 state[25] = self._get_initial_player_encoding(self.seat)
         else:
-            state[(26 * (t_ix + 2)) -1] =\
-             self._get_initial_player_encoding(self.active_hand.played_cards[0].seat)
+            state[(26 * (t_ix + 1)) -1] =\
+              self._get_initial_player_encoding(active_trick.played_cards[0].player_seat)
         for played_card in active_trick.played_cards:
             weight = self._get_encoded_card_val(played_card.player_seat)
-            subgroup_pos = _get_card_repr_ix(played_card.card, active_hand.trump)
+            subgroup_pos = self._get_card_repr_ix(played_card.card, active_hand.trump)
             # offset by the hand, previously evaluated tricks
-            state[(26 * (t_ix + 2)) + subgroup_pos] = weight
+            state[(26 * (t_ix + 1)) + subgroup_pos] = weight
         return state
 
     def _get_encoded_card_val(self, play_seat: int) -> float:

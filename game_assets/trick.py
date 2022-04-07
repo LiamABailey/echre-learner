@@ -20,7 +20,7 @@ class Trick:
     """
     def __init__(self):
         """
-
+        Instantiates an unplayed trick
         """
         self.leading_suit = None
         self.played_cards = []

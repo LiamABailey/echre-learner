@@ -346,7 +346,47 @@ class TestGetStateRepr(unittest.TestCase):
         Tests where the agent has a full hand, and the first trick is
         ongoing (agent did not start)
         """
-        raise NotImplementedError
+        nonlead_cases = [
+            {
+                'agent_hand': self.full_hand_1,
+                'agent_seat': 0,
+                'trump_suit': euchre.CLUB,
+                'active_trick': self.active_trick_c1_1,
+                'expected_encoding': self.load_state_csv("trick1_nonlead_case0.csv")
+            },
+            {
+                'agent_hand': self.full_hand_1,
+                'agent_seat': 1,
+                'trump_suit': euchre.DIAMOND,
+                'active_trick': self.active_trick_c1_3,
+                'expected_encoding': self.load_state_csv("trick1_nonlead_case1.csv")
+            },
+            {
+                'agent_hand': self.full_hand_2,
+                'agent_seat': 2,
+                'trump_suit': euchre.HEART,
+                'active_trick': self.active_trick_c2_1,
+                'expected_encoding': self.load_state_csv("trick1_nonlead_case2.csv")
+            },
+            {
+                'agent_hand': self.full_hand_2,
+                'agent_seat': 3,
+                'trump_suit': euchre.SPADE,
+                'active_trick': self.active_trick_c3_1,
+                'expected_encoding': self.load_state_csv("trick1_nonlead_case3.csv")
+            },
+        ]
+        active_trick = Trick()
+        for i, lc in enumerate(nonlead_cases):
+            trial_agent = RLTrickPlayer(0, None)
+            trial_agent.assign_seat(lc['agent_seat'])
+            trial_agent.receive_cards(lc['agent_hand'])
+            # construct the hand
+            active_hand = Hand(0, lc['trump_suit'], None, None)
+            with self.subTest(test = i):
+                # construct state
+                result_state = trial_agent._get_state_repr(active_hand, lc['active_trick'])
+                assert_allclose(result_state, lc['expected_encoding'], atol=0.01)
 
     def test_get_state_repr_multi_trick(self):
         """
