@@ -376,7 +376,6 @@ class TestGetStateRepr(unittest.TestCase):
                 'expected_encoding': self.load_state_csv("trick1_nonlead_case3.csv")
             },
         ]
-        active_trick = Trick()
         for i, lc in enumerate(nonlead_cases):
             trial_agent = RLTrickPlayer(0, None)
             trial_agent.assign_seat(lc['agent_seat'])
@@ -392,7 +391,29 @@ class TestGetStateRepr(unittest.TestCase):
         """
         validate performance of state encoding as the game is underway
         """
-        raise NotImplementedError
+        underway_cases = [
+            {
+                'agent_hand': self.p4_hand_1,
+                'agent_seat': 2,
+                'trump_suit': euchre.HEART,
+                'active_trick': self.active_trick_c1_3,
+                'played_tricks': [self.complete_trick_1],
+                'expected_encoding': self.load_state_csv("underway_case1.csv")
+            }
+        ]
+        for i, uc in enumerate(underway_cases):
+            trial_agent = RLTrickPlayer(0, None)
+            trial_agent.assign_seat(uc['agent_seat'])
+            trial_agent.cards_held = uc['agent_hand']
+            # construct the hand
+            active_hand = Hand(0, uc['trump_suit'], None, None)
+            for t in uc['played_tricks']:
+                active_hand.add_trick(t)
+            with self.subTest(test = i):
+                # construct state
+                result_state = trial_agent._get_state_repr(active_hand, uc['active_trick'])
+                assert_allclose(result_state, uc['expected_encoding'], atol=0.01)
+
 
     def test_get_state_repr_last_trick(self):
         """
