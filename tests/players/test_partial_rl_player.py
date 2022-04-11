@@ -3,7 +3,7 @@ import os
 import unittest
 
 
-from numpy import ndarray, loadtxt
+from numpy import loadtxt, ndarray, zeros
 from numpy.testing import assert_allclose
 
 from game_assets.players.partial_rl_player import RLTrickPlayer
@@ -434,4 +434,14 @@ class TestGetStateRepr(unittest.TestCase):
         """
         Base case with empty hand, active trick, and agent has no cards
         """
-        raise NotImplementedError
+        trial_agent = RLTrickPlayer(0, None)
+        trial_agent.assign_seat(0)
+        active_hand = Hand(0, euchre.SPADE, None, None)
+        active_trick = Trick()
+
+        expected_state = zeros(155)
+        # if no cards have been played, the agent assumes it must be going first
+        expected_state[25] = 1
+
+        result_state = trial_agent._get_state_repr(active_hand, active_trick)
+        assert_allclose(result_state, expected_state)
