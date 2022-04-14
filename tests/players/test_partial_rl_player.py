@@ -407,6 +407,14 @@ class TestGetStateRepr(unittest.TestCase):
                 'active_trick': self.active_trick_c2_2,
                 'played_tricks': [self.complete_trick_2, self.complete_trick_3],
                 'expected_encoding': self.load_state_csv("underway_case2.csv")
+            },
+            {
+                'agent_hand': self.p2_hand_1,
+                'agent_seat': 0,
+                'trump_suit': euchre.SPADE,
+                'active_trick': self.active_trick_c3_1,
+                'played_tricks': [self.complete_trick_4, self.complete_trick_5, self.complete_trick_6],
+                'expected_encoding': self.load_state_csv("underway_case3.csv")
             }
         ]
         for i, uc in enumerate(underway_cases):
