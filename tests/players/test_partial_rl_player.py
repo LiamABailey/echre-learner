@@ -436,6 +436,35 @@ class TestGetStateRepr(unittest.TestCase):
         state encoding where the last trick is being played (only one card
         remains in the agent's hand)
         """
+        underway_cases = [
+            {
+                'agent_hand': self.p1_hand_1,
+                'agent_seat': 3,
+                'trump_suit': euchre.DIAMOND,
+                'active_trick': self.active_trick_c1_1,
+                'played_tricks': [self.complete_trick_1, self.complete_trick_2,
+                                self.complete_trick_3, self.complete_trick_4],
+                'expected_encoding': self.load_state_csv("last_trick_case0.csv")
+            }
+        ]
+        for i, uc in enumerate(underway_cases):
+            trial_agent = RLTrickPlayer(0, None)
+            trial_agent.assign_seat(uc['agent_seat'])
+            trial_agent.cards_held = uc['agent_hand']
+            # construct the hand
+            active_hand = Hand(0, uc['trump_suit'], None, None)
+            for t in uc['played_tricks']:
+                active_hand.add_trick(t)
+            with self.subTest(test = i):
+                # construct state
+                result_state = trial_agent._get_state_repr(active_hand, uc['active_trick'])
+                assert_allclose(result_state, uc['expected_encoding'], atol=0.01)
+
+    def test_get_state_repr_all_complete(self):
+        """
+        Tests where all players have played five cards (no cards in hand
+        for the agent)
+        """
         raise NotImplementedError
 
     def test_get_state_repr_empty(self):
