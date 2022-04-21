@@ -430,7 +430,6 @@ class TestGetStateRepr(unittest.TestCase):
                 result_state = trial_agent._get_state_repr(active_hand, uc['active_trick'])
                 assert_allclose(result_state, uc['expected_encoding'], atol=0.01)
 
-
     def test_get_state_repr_last_trick(self):
         """
         state encoding where the last trick is being played (only one card
@@ -440,11 +439,29 @@ class TestGetStateRepr(unittest.TestCase):
             {
                 'agent_hand': self.p1_hand_1,
                 'agent_seat': 3,
-                'trump_suit': euchre.DIAMOND,
+                'trump_suit': euchre.HEART,
                 'active_trick': self.active_trick_c1_1,
                 'played_tricks': [self.complete_trick_1, self.complete_trick_2,
                                 self.complete_trick_3, self.complete_trick_4],
                 'expected_encoding': self.load_state_csv("last_trick_case0.csv")
+            },
+            {
+                'agent_hand': self.p1_hand_2,
+                'agent_seat': 1,
+                'trump_suit': euchre.SPADE,
+                'active_trick': self.active_trick_c2_1,
+                'played_tricks': [self.complete_trick_6, self.complete_trick_5,
+                                self.complete_trick_3, self.complete_trick_1],
+                'expected_encoding': self.load_state_csv("last_trick_case1.csv")
+            },
+            {
+                'agent_hand': self.p1_hand_3,
+                'agent_seat': 0,
+                'trump_suit': euchre.CLUB,
+                'active_trick': self.active_trick_c3_2,
+                'played_tricks': [self.complete_trick_2, self.complete_trick_4,
+                                self.complete_trick_6, self.complete_trick_5],
+                'expected_encoding': self.load_state_csv("last_trick_case2.csv")
             }
         ]
         for i, uc in enumerate(underway_cases):
