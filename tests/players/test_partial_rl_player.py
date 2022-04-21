@@ -482,7 +482,43 @@ class TestGetStateRepr(unittest.TestCase):
         Tests where all players have played five cards (no cards in hand
         for the agent)
         """
-        raise NotImplementedError
+        complete_cases = [
+            {
+                'agent_seat': 0,
+                'trump_suit': euchre.DIAMOND,
+                'active_trick': self.complete_trick_1,
+                'played_tricks': [self.complete_trick_5, self.complete_trick_4,
+                                self.complete_trick_3, self.complete_trick_2],
+                'expected_encoding': self.load_state_csv("complete_case0.csv")
+            },
+            {
+                'agent_seat': 2,
+                'trump_suit': euchre.SPADE,
+                'active_trick': self.complete_trick_2,
+                'played_tricks': [self.complete_trick_4, self.complete_trick_6,
+                                self.complete_trick_1, self.complete_trick_3],
+                'expected_encoding': self.load_state_csv("complete_case01.csv")
+            },
+            {
+                'agent_seat': 1,
+                'trump_suit': euchre.CLUB,
+                'active_trick': self.complete_trick_6,
+                'played_tricks': [self.complete_trick_1, self.complete_trick_3,
+                                self.complete_trick_2, self.complete_trick_5],
+                'expected_encoding': self.load_state_csv("complete_case2.csv")
+            }
+        ]
+        for i, cc in enumerate(complete_cases):
+            trial_agent = RLTrickPlayer(0, None)
+            trial_agent.assign_seat(cc['agent_seat'])
+            trial_agent.cards_held = []
+            active_hand = Hand(0, cc['trump_suit'], None, None)
+            for t in cc['played_tricks']:
+                active_hand.add_trick(t)
+            with self.subTest(test = i):
+                raise NotImplementedError
+                result_state = trial_agent._get_state_repr(active_hand, cc['active_trick'])
+                assert_allclose(result_state, cc['expected_encoding'], atol=0.01)
 
     def test_get_state_repr_empty(self):
         """
