@@ -497,7 +497,7 @@ class TestGetStateRepr(unittest.TestCase):
                 'active_trick': self.complete_trick_2,
                 'played_tricks': [self.complete_trick_4, self.complete_trick_6,
                                 self.complete_trick_1, self.complete_trick_3],
-                'expected_encoding': self.load_state_csv("complete_case01.csv")
+                'expected_encoding': self.load_state_csv("complete_case1.csv")
             },
             {
                 'agent_seat': 1,
@@ -516,7 +516,6 @@ class TestGetStateRepr(unittest.TestCase):
             for t in cc['played_tricks']:
                 active_hand.add_trick(t)
             with self.subTest(test = i):
-                raise NotImplementedError
                 result_state = trial_agent._get_state_repr(active_hand, cc['active_trick'])
                 assert_allclose(result_state, cc['expected_encoding'], atol=0.01)
 
