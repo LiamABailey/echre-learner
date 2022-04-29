@@ -1,11 +1,11 @@
-from numpy import array,zeros
+from numpy import array,floor,zeros
 
 from .heuristic_player import HeuristicPlayer
 from ..models.trick_model import TrickModel
 from ..card import Card
 from ..hand import Hand
 from ..trick import Trick
-from ..euchre import CARD_FACES, SUITS, NUM_PLAYERS
+import ..euchre
 
 class RLTrickPlayer(HeuristicPlayer):
     """
@@ -125,8 +125,8 @@ class RLTrickPlayer(HeuristicPlayer):
         The encoding scheme is as follows:
 
         positions 0-24:
-            Trump: CARD_FACES order,J-left
-            other suit 1,2,3: CARD_FACES
+            Trump: euchre.CARD_FACES order,J-left
+            other suit 1,2,3: euchre.CARD_FACES
             1 if in player's hand, else 0
         positions 25,51,77,103,129
             The leading player of a trick. Clockwise from the agent:
@@ -196,9 +196,9 @@ class RLTrickPlayer(HeuristicPlayer):
         """
         if not isinstance(play_seat, int) or isinstance(play_seat, bool):
             raise TypeError(f"Expected type(play_seat) = int, received {type(play_seat)}")
-        if not (0 <= play_seat < NUM_PLAYERS):
+        if not (0 <= play_seat < euchre.NUM_PLAYERS):
             raise ValueError(f"Expected play_seat in [0,3], received {play_seat}")
-        return (((play_seat - self.seat -1)% NUM_PLAYERS) + 1) * .25
+        return (((play_seat - self.seat -1)% euchre.NUM_PLAYERS) + 1) * .25
 
     def _get_initial_player_encoding(self, play_seat: int) -> float:
         """
@@ -216,9 +216,9 @@ class RLTrickPlayer(HeuristicPlayer):
         """
         if not isinstance(play_seat, int) or isinstance(play_seat, bool):
             raise TypeError(f"Expected type(play_seat) = int, received {type(play_seat)}")
-        if not (0 <= play_seat < NUM_PLAYERS):
+        if not (0 <= play_seat < euchre.NUM_PLAYERS):
             raise ValueError(f"Expected play_seat in [0,3], received {play_seat}")
-        return (((play_seat - self.seat -1)% NUM_PLAYERS)) / (NUM_PLAYERS -1)
+        return (((play_seat - self.seat -1)% euchre.NUM_PLAYERS)) / (euchre.NUM_PLAYERS -1)
 
     @staticmethod
     def _get_card_repr_ix(c: Card, trump_suit: int):
@@ -242,17 +242,51 @@ class RLTrickPlayer(HeuristicPlayer):
         """
         _trump_cards = 7
         _non_trump_cards = 6
-        # note, SUITS[:trump_suit] + SUITS[trump_suit + 1:]
-        # is more efficient, but requires SUITS = [0,1,2,3].
-        non_trump_suits = SUITS[:]
-        non_trump_suits.remove(trump_suit)
         if c.is_trump(trump_suit):
             if c.suit != trump_suit:
                 # left bar
                 return _trump_cards - 1
             else:
-                return CARD_FACES.index(c.face)
+                return euchre.CARD_FACES.index(c.face)
         else:
+            # note, euchre.SUITS[:trump_suit] + euchre.SUITS[trump_suit + 1:]
+            # is more efficient, but requires euchre.SUITS = [0,1,2,3].
+            non_trump_suits = euchre.SUITS[:]
+            non_trump_suits.remove(trump_suit)
             return _trump_cards\
                  + (non_trump_suits.index(c.suit) * _non_trump_cards)\
-                 + CARD_FACES.index(c.face)
+                 + euchre.CARD_FACES.index(c.face)
+
+    @staticmethod
+    def _invert_card_repr_ix(ix: int, trump_suit: int):
+        """
+        Given the index of the card in the 0-24 space, and
+        the trump suit, returns the associated Card
+
+        Expected index is from the _get_card_repr_ix method
+
+        Parameters
+        ----------
+            ix: int; 0 <= ix <= 24
+                The index representation of the card.
+
+            trump_suit: int
+                The trump suit representation from 'euchre'
+
+        Returns
+            card.Card : The card represented by the index
+        """
+        if ix < 0 or ix > 24:
+            raise ValueError(f"ix must be between 0 and 24, received {ix}")
+        if ix < 6:
+            return Card(trump_suit, euchre.CARD_FACES.index(ix))
+        elif ix == 6:
+            # left bar
+            return Card(euchre.LEFT_SUIT[trump_suit], euchre.JACK)
+        else:
+            non_trump_suits = euchre.SUITS[:]
+            non_trump_suits.remove(trump_suit)
+            # the cards at index 7-24 are the remaining suits,
+            # each with six possible cards. Because of this, we can
+            # unpack the suit and face as follows:
+            return Card(np.floor((ix-7)/6), (ix-7)%6)

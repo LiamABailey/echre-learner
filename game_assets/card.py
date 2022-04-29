@@ -10,10 +10,18 @@ class Card:
     suit: int
     face: int
 
-
     def __str__(self):
         return (f"{FACE_DESCRIPTOR[self.face].capitalize()} of "
                 f"{SUIT_DESCRIPTOR[self.suit].capitalize()}s")
+
+    def __eq__(self, other):
+        """
+        Equality implementation
+        """
+        if isinstance(other, Card):
+                return (self.suit == other.suit) and\
+                        (self.face == other.face)
+        return False
 
     def _is_left_bar(self, trump: int) -> bool:
         """
