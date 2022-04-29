@@ -14,7 +14,7 @@ class RLTrickPlayer(HeuristicPlayer):
     """
 
     def __init__(self, id: int, trick_play_model: TrickModel,
-                pickup_act = 1/3, trump_call_act = 0.55,):
+                pickup_act = 1/3, trump_call_act = 0.55):
         """
         Parameters
         ----------
@@ -35,7 +35,6 @@ class RLTrickPlayer(HeuristicPlayer):
                 Controls the player's decision to pick a trump suit during the
                 free selection round. 1 is most aggresive, 0 is least.
                 Must be in range [0,1]
-
         """
         self.player_id = id
         self.seat = None
@@ -107,7 +106,6 @@ class RLTrickPlayer(HeuristicPlayer):
         Returns
         -------
             card.Card : The card played by the player (popped from 'cards_held')
-
         """
         played_card_ix = self.trick_play_model.pred_card(self.cards_held, active_hand, active_trick)
         if self.training:

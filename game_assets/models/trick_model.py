@@ -49,42 +49,42 @@ class TrickModel(ABC):
     @abstractmethod
     def pred_card(self, player_hand: List[Card], active_hand: Hand,
                 active_trick: Trick) -> int:
-            """
-            Selects the card to play from the players hand
+        """
+        Selects the card to play from the players hand
 
-            Given the known information about the game:
-                - played tricks
-                - the trick currently being played
-                - the kitty card (and if it was passed)
-                - the face-up card in the dealer's hand
-                - the dealer's seat
-                - the seat of the player who starts the trick
-                - the player's current hand
-             selects a card to play, removing it from the player's hand and
-             returning it
+        Given the known information about the game:
+            - played tricks
+            - the trick currently being played
+            - the kitty card (and if it was passed)
+            - the face-up card in the dealer's hand
+            - the dealer's seat
+            - the seat of the player who starts the trick
+            - the player's current hand
+         selects a card to play, removing it from the player's hand and
+         returning it
 
-            Parameters
-            ----------
-                player_hand : List[Card]
-                    The cards currently held by the player
+        Parameters
+        ----------
+            player_hand : List[Card]
+                The cards currently held by the player
 
-                active_hand : hand.Hand
-                    The hand currently being played
+            active_hand : hand.Hand
+                The hand currently being played
 
-                active_trick : trick.Trick
-                    The trick currently being played
+            active_trick : trick.Trick
+                The trick currently being played
 
-                dealer_seat : int
-                    The seat of the dealer player, 0-3
+            dealer_seat : int
+                The seat of the dealer player, 0-3
 
-                lead_seat : int
-                    The seat of the player who started the trick
+            lead_seat : int
+                The seat of the player who started the trick
 
-            Returns
-            -------
-                int : the in-hand index of the card to be played
-            """
-            raise NotImplementedError
+        Returns
+        -------
+            int : the in-hand index of the card to be played
+        """
+        raise NotImplementedError
 
     def step_fit(self, **kwargs) -> None:
         """
