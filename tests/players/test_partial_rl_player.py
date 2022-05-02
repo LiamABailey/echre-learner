@@ -3,7 +3,7 @@ import os
 import unittest
 
 
-from numpy import loadtxt, ndarray, zeros
+from numpy import loadtxt, ndarray, zeros, nan
 from numpy.testing import assert_allclose
 
 from game_assets.players.partial_rl_player import RLTrickPlayer
@@ -582,3 +582,60 @@ class TestGetCardReprIx(unittest.TestCase):
             with self.subTest(test=i):
                 with self.assertRaises(ValueError):
                     trial_agent._get_card_repr_ix(ic.card_, ic.trump_suit)
+
+class TestInvertCardReprIx(unittest.TestCase):
+
+    @dataclass
+    class InvReprCase:
+            card_ix: int
+            trump_suit: int
+            expected_card: Card = None
+
+    def test_inv_state_repr_valid(self):
+        """
+        Standard valid-unput cases of card-from-state function.
+        Includes tests of boundaries, edge case(left bar)
+        """
+        raise NotImplementedError
+
+    def test_inv_state_repr_oob(self):
+        """
+        Tests where the index is out of bounds.
+        Note: there's limited concern w/ expected usage pattern for the providing
+        of an invalid suit, so this is not directly tested.
+        """
+        oob_cases = [
+            TestInvertCardReprIx.InvReprCase(-1, euchre.DIAMOND),
+            TestInvertCardReprIx.InvReprCase(25, euchre.HEART),
+            TestInvertCardReprIx.InvReprCase(-100, euchre.CLUB),
+            TestInvertCardReprIx.InvReprCase(100, euchre.SPADE)
+        ]
+        for i, oc in enumerate(oob_cases):
+            trial_agent = RLTrickPlayer(0, None)
+            with self.subTest(test=i):
+                with self.assertRaises(ValueError):
+                    trial_agent._invert_card_repr_ix(oc.card_ix, oc.trump_suit)
+
+    def test_inv_state_repr_ix_typing(self):
+        """
+        Tests validating type exception on non-int types for card value.
+        Of particular concern is the use of floating points.
+        Note: there's limited concern w/ expected usage pattern for the providing
+        of an invalid suit, so this is not directly tested.
+        """
+        type_cases = [
+            TestInvertCardReprIx.InvReprCase(0.0, euchre.DIAMOND),
+            TestInvertCardReprIx.InvReprCase(3., euchre.HEART),
+            TestInvertCardReprIx.InvReprCase(24., euchre.CLUB),
+            TestInvertCardReprIx.InvReprCase(1.1, euchre.SPADE),
+            TestInvertCardReprIx.InvReprCase(True, euchre.CLUB),
+            TestInvertCardReprIx.InvReprCase(None, euchre.HEART),
+            TestInvertCardReprIx.InvReprCase(nan, euchre.DIAMOND),
+            TestInvertCardReprIx.InvReprCase(Card(euchre.SPADE, euchre.TEN), euchre.SPADE),
+            TestInvertCardReprIx.InvReprCase("Card", euchre.HEART)
+        ]
+        for i, tc in enumerate(type_cases):
+            trial_agent = RLTrickPlayer(0, None)
+            with self.subTest(test=i):
+                with self.assertRaises(TypeError):
+                    trial_agent._invert_card_repr_ix(tc.card_ix, tc.trump_suit)\

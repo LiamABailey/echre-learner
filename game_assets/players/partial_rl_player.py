@@ -276,6 +276,8 @@ class RLTrickPlayer(HeuristicPlayer):
         Returns
             card.Card : The card represented by the index
         """
+        if not isinstance(ix, int) or isinstance(ix,bool):
+            raise TypeError(f"ix must be int, received {type(ix)}")
         if ix < 0 or ix > 24:
             raise ValueError(f"ix must be between 0 and 24, received {ix}")
         if ix < 6:
@@ -289,4 +291,4 @@ class RLTrickPlayer(HeuristicPlayer):
             # the cards at index 7-24 are the remaining suits,
             # each with six possible cards. Because of this, we can
             # unpack the suit and face as follows:
-            return Card(np.floor((ix-7)/6), (ix-7)%6)
+            return Card(floor((ix-7)/6), (ix-7)%6)
