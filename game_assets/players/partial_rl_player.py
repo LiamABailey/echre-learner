@@ -5,7 +5,7 @@ from ..models.trick_model import TrickModel
 from ..card import Card
 from ..hand import Hand
 from ..trick import Trick
-import ..euchre
+from .. import euchre
 
 class RLTrickPlayer(HeuristicPlayer):
     """

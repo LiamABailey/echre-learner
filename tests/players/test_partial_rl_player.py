@@ -534,3 +534,51 @@ class TestGetStateRepr(unittest.TestCase):
 
         result_state = trial_agent._get_state_repr(active_hand, active_trick)
         assert_allclose(result_state, expected_state)
+
+
+class TestGetCardReprIx(unittest.TestCase):
+
+    @dataclass
+    class ReprCase:
+            card_: Card
+            trump_suit: int
+            expected_ix: int = -1
+
+    def test_get_state_repr_valid(self):
+        """
+        Cases where a valid card is provided
+        """
+        valid_cases = [
+            TestGetCardReprIx.ReprCase(Card(euchre.CLUB, euchre.NINE), euchre.CLUB, 0),
+            TestGetCardReprIx.ReprCase(Card(euchre.CLUB, euchre.JACK), euchre.CLUB, 2),
+            TestGetCardReprIx.ReprCase(Card(euchre.SPADE, euchre.JACK), euchre.CLUB, 6),
+            TestGetCardReprIx.ReprCase(Card(euchre.CLUB, euchre.NINE), euchre.SPADE, 7),
+            TestGetCardReprIx.ReprCase(Card(euchre.SPADE, euchre.NINE), euchre.CLUB, 19),
+            TestGetCardReprIx.ReprCase(Card(euchre.DIAMOND, euchre.TEN), euchre.CLUB, 8),
+            TestGetCardReprIx.ReprCase(Card(euchre.HEART, euchre.ACE), euchre.DIAMOND, 18),
+            TestGetCardReprIx.ReprCase(Card(euchre.HEART, euchre.QUEEN), euchre.SPADE, 22),
+            TestGetCardReprIx.ReprCase(Card(euchre.HEART, euchre.KING), euchre.HEART, 4),
+            TestGetCardReprIx.ReprCase(Card(euchre.SPADE, euchre.ACE), euchre.HEART, 24)
+        ]
+        for i, vc in enumerate(valid_cases):
+            trial_agent = RLTrickPlayer(0, None)
+            with self.subTest(test = i):
+                result_ix = trial_agent._get_card_repr_ix(vc.card_, vc.trump_suit)
+                self.assertEqual(result_ix, vc.expected_ix)
+
+    def test_get_state_repr_invalid(self):
+        """
+        Test for OOB performance when an invalid suit, trump is provided
+        """
+        invalid_cases = [
+            TestGetCardReprIx.ReprCase(Card(-1, -1), euchre.CLUB),
+            TestGetCardReprIx.ReprCase(Card(euchre.CLUB, -1), euchre.CLUB),
+            TestGetCardReprIx.ReprCase(Card(5, euchre.ACE), euchre.DIAMOND),
+            TestGetCardReprIx.ReprCase(Card(euchre.HEART, 20), euchre.HEART),
+            TestGetCardReprIx.ReprCase(Card(10,10), euchre.SPADE)
+        ]
+        for i, ic in enumerate(invalid_cases):
+            trial_agent = RLTrickPlayer(0, None)
+            with self.subTest(test=i):
+                with self.assertRaises(ValueError):
+                    trial_agent._get_card_repr_ix(ic.card_, ic.trump_suit)
