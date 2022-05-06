@@ -47,6 +47,49 @@ class RLTrickPlayer(HeuristicPlayer):
             raise ValueError(f"trump_call_act must be in [0,1], received {trump_call_act}")
         self.trump_call_thresh = trump_call_act
         self.trick_play_model = trick_play_model
+        self._last_reward = None
+
+    @property
+    def last_reward(self):
+        return self._last_reward
+
+    @attribute.setter
+    def last_reward(self, trick_won: bool, hand_won: bool = None,
+                        hand_points: int = 0) -> None:
+        """
+        Constructs and sets the reward associated with the last action -
+        reward is weighted by if the trick was won (by the team), if the hand
+        was won (by the team, if on a terminating round), and the points
+        awarded to the team that won the hand (if on a terminating round)
+
+        Parameters
+        ----------
+            trick_won: bool
+                True if the player's team won the last trick, else False
+            hand_won: bool = None
+                True if player's team won the hand, else False. None if
+                    not immediately after a hand-terminating trick
+            hand_points: bool = None
+                Number of points awarded to the team that won the hand. Zero
+                    if not immediately after a hand-terminating trick
+
+        Returns
+        -------
+            None
+
+        Side Effects
+        ------------
+
+
+        """
+        # winning a trick is +/- .1 points
+        r_trick = ((2 ** (trick_won + 1)) -3)/10
+        r_hand = 0
+        if hand_team_won is not None:
+            r_hand = (2 ** (hand_won +1) -3) * hand_points
+        self._last_reward = r_trick + r_hand
+
+
 
     def enable_learning(self):
         """
